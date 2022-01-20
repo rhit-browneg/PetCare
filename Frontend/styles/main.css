@@ -1,0 +1,53 @@
+body {
+    background: #0a9ebfa6;
+}
+
+.navbar {
+    font-family: 'Oswald', sans-serif;
+    background-color: #0fa3c9;
+    color: white;
+}
+.links{
+    text-decoration: underline 3px #0968B5 ;
+    
+}
+#columns {
+    column-count: 3;
+    column-gap: 5px;
+    margin-left: 4em;
+    
+}
+.petImg{
+    width: 270px;
+    height: 210px;
+    
+    border: solid 10px white;
+   
+
+   
+}
+.pet{
+    
+    background-color: white;
+    max-width: 270px;
+    margin-bottom: 40px;
+    
+    
+}
+.navbar img
+{
+    height:50px;
+    margin-left: -30px;
+    
+}
+#title
+{
+    margin-left: 5px;
+}
+
+.page-container {
+    margin-top: 130px;
+    font-family: 'Oswald', sans-serif;
+    color: white;
+   
+}
