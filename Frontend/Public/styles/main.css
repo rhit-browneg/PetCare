@@ -3,7 +3,7 @@ body {
 }
 
 .navbar {
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Oswald';
     background-color: #0fa3c9;
     color: white;
 }
@@ -47,7 +47,7 @@ body {
 
 .page-container {
     margin-top: 130px;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Oswald';
     color: white;
    
 }
