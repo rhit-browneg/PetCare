@@ -1,36 +1,46 @@
-/**
- * @fileoverview
- * Provides the JavaScript interactions for all pages.
- *
- * @author 
- * PUT_YOUR_NAME_HERE
- */
-
-/** namespace. */
 var rhit = rhit || {};
+const userUrl = "http://localhost:3000/api/";
 
-/** globals */
-rhit.variableName = "";
-
-/** function and class syntax examples */
-rhit.functionName = function () {
-	/** function body */
-};
-
-rhit.ClassName = class {
-	constructor() {
+rhit.UserController = class {
+	constructor(){
+		document.querySelector("#Register").onclick = (event) => {
+			const createWordInput = document.querySelector("#inputUser");
+			this.register(createWordInput.value);
+			createWordInput.value = "";
+		};
 
 	}
-
-	methodName() {
+	register(user) {
+		if (!user) {
+			console.log("No word provided.  Ignoring request.");
+			return;
+		}
+			let data = {
+				"user": user,
+			};
+			let entry = fetch(userUrl+"add/", {
+					method: "POST",
+					headers: {
+						"Content-Type": 'application/json'
+					},
+					body: JSON.stringify(data)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		
 
 	}
 }
+
 
 /* Main */
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
+	if (document.querySelector("#mainPage")) {
+		new rhit.UserController();
+	}
 };
 
 rhit.main();

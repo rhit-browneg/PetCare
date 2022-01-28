@@ -1,20 +1,42 @@
 var Connection = require('tedious').Connection;  
 let config = require('./config.js');
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+app.use('/', express.static("public"));
+app.use('/api/', bodyParser.urlencoded({
+    extended: true
+}));
+app.use('/api/', bodyParser.json());
 
+var Request = require('tedious').Request;  
+var TYPES = require('tedious').TYPES;  
 var connection = new Connection(config);  
 connection.on('connect', function(err) {  
     // If no error, then good to proceed.  
     console.log("Connected");  
-    executeStatement();  
+    executeStatement();
+    app.post("/api/add",function(req,res){
+      let user = req.body.user;
+      connection.query("call register(?,?,?,?,?,?,?)", [user, 'sdf','sfdsfd','afds','dfds','are',1833439863], function (err, result) {
+        if (err) {
+            console.log("err:", err);
+        } else {
+            console.log("results:", result);
+        }
+    
+    });
+    
+      
+    }) 
+    
 });  
 
 connection.connect();
 
-var Request = require('tedious').Request;  
-var TYPES = require('tedious').TYPES;  
 
 function executeStatement() {  
-    request = new Request("SELECT * FROM Pet;", function(err) {  
+    request = new Request("SELECT * FROM Species", function(err) {  
     if (err) {  
         console.log(err);}  
     });  
@@ -41,5 +63,7 @@ function executeStatement() {
     });
     connection.execSql(request);  
 }  
+app.listen(3000);
+
     
 
