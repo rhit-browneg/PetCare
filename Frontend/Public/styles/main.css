@@ -51,3 +51,11 @@ body {
     color: white;
    
 }
+
+
+.modal-body, .modal-header, .modal-footer{
+    background-color: #0a9ebfa6;
+} 
+text{
+    color: white;
+}
