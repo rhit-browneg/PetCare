@@ -1,19 +1,6 @@
 var Connection = require('tedious').Connection;  
-var config = {  
-    server: 'titan.csse.rose-hulman.edu',  //update me
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'SodaBasestewarhr', //update me
-            password: 'DogCatFish'  //update me
-        }
-    },
-    options: {
-        // If you are on Microsoft Azure, you need encryption:
-        encrypt: true,
-        database: 'PetCare'  //update me
-    }
-}; 
+let config = require('./config.js');
+
 var connection = new Connection(config);  
 connection.on('connect', function(err) {  
     // If no error, then good to proceed.  
