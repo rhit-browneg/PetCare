@@ -3,6 +3,7 @@ let config = require('./config.js');
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+var crypto = require('crypto');
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.urlencoded({
     extended: true
@@ -15,28 +16,48 @@ var connection = new Connection(config);
 connection.on('connect', function(err) {  
     // If no error, then good to proceed.  
     console.log("Connected");  
-    executeStatement();
+    //executeStatement();
     app.post("/api/add",function(req,res){
       let user = req.body.user;
-      connection.query("call register(?,?,?,?,?,?,?)", [user, 'sdf','sfdsfd','afds','dfds','are',1833439863], function (err, result) {
-        if (err) {
-            console.log("err:", err);
-        } else {
-            console.log("results:", result);
-        }
-    
-    });
-    
-      
+      let pass = req.body.pass;
+      let fName = req.body.fName;
+      let lName = req.body.lName;
+      let address = req.body.address;
+      let phone = req.body.phone;
+      let salt = createSalt();
+      let hash = hashPassword(pass,salt);
+      request = new Request('register', function(err) {  
+        if (err) {  
+            console.log(err);}  
+        });  
+        request.addParameter('Username',TYPES.NVarChar,user);
+        request.addParameter('PasswordSalt',TYPES.VarChar,salt);
+        request.addParameter('PasswordHash',TYPES.VarChar,hash);
+        request.addParameter('fname',TYPES.VarChar,fName);
+        request.addParameter('lname',TYPES.VarChar,lName);
+        request.addParameter('address',TYPES.VarChar,address);
+        request.addParameter('number', TYPES.Int,phone);
+        connection.callProcedure(request); 
     }) 
-    
+     
 });  
 
 connection.connect();
 
 
+function createSalt(){
+  return crypto.randomBytes(Math.ceil(16/2))
+      .toString('hex')
+      .slice(0,16);   
+};
+function hashPassword(pass,salt){
+  var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
+      hash.update(pass);
+      var value = hash.digest('hex');
+       return value;
+};
 function executeStatement() {  
-    request = new Request("SELECT * FROM Species", function(err) {  
+    request = new Request("SELECT * FROM Pet", function(err) {  
     if (err) {  
         console.log(err);}  
     });  
@@ -59,11 +80,12 @@ function executeStatement() {
     
     // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
-        connection.close();
+      //connection.close();
     });
     connection.execSql(request);  
 }  
 app.listen(3000);
+connection.close();
 
     
 

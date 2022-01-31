@@ -1,22 +1,42 @@
 var rhit = rhit || {};
 const userUrl = "http://localhost:3000/api/";
 
+
 rhit.UserController = class {
 	constructor(){
 		document.querySelector("#Register").onclick = (event) => {
-			const createWordInput = document.querySelector("#inputUser");
-			this.register(createWordInput.value);
-			createWordInput.value = "";
+			console.log("press")
+			const InputUser = document.querySelector("#inputUser");
+			const InputPassword = document.querySelector("#inputPassword");
+			const InputFName = document.querySelector("#inputFName");
+			const InputLName = document.querySelector("#inputLName");
+			const InputAddress = document.querySelector("#inputAddress");
+			const InputPhone = document.querySelector("#inputPhone");
+			this.register(InputUser.value,InputPassword.value,InputFName.value,InputLName.value,InputAddress.value,InputPhone.value);
+			InputUser.value = "";
+			InputPassword.value = "";
+			InputFName.value = "";
+			InputLName.value = "";
+			InputAddress.value = "";
+			InputPhone.value = "";
+
 		};
 
 	}
-	register(user) {
+	register(user,pass,fName,lName,address,phone) {
 		if (!user) {
-			console.log("No word provided.  Ignoring request.");
+			console.log("No user provided.  Ignoring request.");
 			return;
 		}
+		
+
 			let data = {
 				"user": user,
+				"pass": pass,
+				"fName" : fName,
+				"lName" : lName,
+				"address" : address,
+				"phone" : phone
 			};
 			let entry = fetch(userUrl+"add/", {
 					method: "POST",
@@ -31,7 +51,8 @@ rhit.UserController = class {
 		
 
 	}
-}
+	 
+};
 
 
 /* Main */
@@ -40,6 +61,7 @@ rhit.main = function () {
 	console.log("Ready");
 	if (document.querySelector("#mainPage")) {
 		new rhit.UserController();
+
 	}
 };
 
