@@ -5,7 +5,6 @@ const userUrl = "http://localhost:3000/api/";
 rhit.UserController = class {
 	constructor(){
 		document.querySelector("#Register").onclick = (event) => {
-			console.log("press")
 			const InputUser = document.querySelector("#inputUser");
 			const InputPassword = document.querySelector("#inputPassword");
 			const InputFName = document.querySelector("#inputFName");
@@ -21,6 +20,14 @@ rhit.UserController = class {
 			InputPhone.value = "";
 
 		};
+		document.querySelector("#Login").onclick = (event) => {
+			const InputUser = document.querySelector("#inputExistUser");
+			const InputPassword = document.querySelector("#inputExistPassword");
+			this.login(InputUser.value,InputPassword.value);
+			InputUser.value = "";
+			InputPassword.value = "";
+
+		};
 
 	}
 	register(user,pass,fName,lName,address,phone) {
@@ -28,9 +35,7 @@ rhit.UserController = class {
 			console.log("No user provided.  Ignoring request.");
 			return;
 		}
-		
-
-			let data = {
+		let data = {
 				"user": user,
 				"pass": pass,
 				"fName" : fName,
@@ -38,7 +43,29 @@ rhit.UserController = class {
 				"address" : address,
 				"phone" : phone
 			};
-			let entry = fetch(userUrl+"add/", {
+			let entry = fetch(userUrl+"reg/", {
+					method: "POST",
+					headers: {
+						"Content-Type": 'application/json'
+					},
+					body: JSON.stringify(data)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		
+
+	}
+	login(user,pass) {
+		if (!user) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+				"user": user,
+				"pass": pass,
+			};
+			let entry = fetch(userUrl+"log/", {
 					method: "POST",
 					headers: {
 						"Content-Type": 'application/json'

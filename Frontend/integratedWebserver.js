@@ -17,7 +17,7 @@ connection.on('connect', function(err) {
     // If no error, then good to proceed.  
     console.log("Connected");  
     //executeStatement();
-    app.post("/api/add",function(req,res){
+    app.post("/api/reg",function(req,res){
       let user = req.body.user;
       let pass = req.body.pass;
       let fName = req.body.fName;
