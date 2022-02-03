@@ -94,7 +94,7 @@ function createSalt(){
       .slice(0,16);   
 };
 function hashPassword(pass,salt){
-  var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
+  var hash = crypto.createHmac('sha1', salt); /** Hashing algorithm sha512 */
       hash.update(pass);
       var value = hash.digest('hex');
        return value;
