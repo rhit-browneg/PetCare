@@ -72,11 +72,17 @@ rhit.UserController = class {
 					},
 					body: JSON.stringify(data)
 				})
-				.catch((err) => {
-					console.log(err);
-				});
-		
-
+				.then( Response => Response.json() )
+				.then (Response => {
+					console.log("got response");
+					console.log(Response);
+					document.querySelector("#pName").value = Response.name;
+					document.querySelector("#DOB").value = Response.DOB;
+					document.querySelector("#breed").value = Response.breed;
+					document.querySelector("#gender").value = Response.gender;
+					document.querySelector("#species").value = Response.species;
+					document.querySelector("#vet").value = Response.vet;
+				})
 	}
 	 
 };

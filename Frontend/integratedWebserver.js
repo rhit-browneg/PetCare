@@ -43,27 +43,43 @@ connection.on('connect', function(err) {
     app.post("/api/log",function(req,res){
       let user = req.body.user;
       let pass = req.body.pass;
-      request = new Request('check_passwords', function(err) {  
+      // request = new Request('check_passwords', function(err) {  
+      //   if (err) {  
+      //       console.log(err);}  
+      //   });  
+      //   request.addParameter('username',TYPES.NVarChar,user);
+      //   let salt = null;
+      //   let hash = null;
+      //   request.on('row', (columns) => {
+      //     salt = columns[0].value;
+      //     hash = columns[1].value;
+      //   });
+      //   request.on('doneInProc', (rowCount, more, rows) => {
+      //     console.log(rowCount + ' rows returned');
+      //     console.log(salt + ' ' + hash);
+      //   });
+      //   request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
+      //     console.log("done");
+      //     let hashedpass = hashPassword(pass, salt);
+      //     console.log(pass);
+      //     console.log(hashedpass);
+      //     console.log(hashedpass ===hash)
+      //   });
+      //   connection.callProcedure(request);
+      request = new Request('get_pet_info', function(err) {  
         if (err) {  
             console.log(err);}  
         });  
+        var result = [];
         request.addParameter('username',TYPES.NVarChar,user);
-        let salt = null;
-        let hash = null;
         request.on('row', (columns) => {
-          salt = columns[0].value;
-          hash = columns[1].value;
-        });
-        request.on('doneInProc', (rowCount, more, rows) => {
-          console.log(rowCount + ' rows returned');
-          console.log(salt + ' ' + hash);
+          columns.forEach(column => {
+            result.push(column.value);
+          });
         });
         request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
-          console.log("done");
-          let hashedpass = hashPassword(pass, Buffer.from(salt));
-          console.log(pass);
-          console.log(hashedpass);
-          console.log(hashedpass ===hash)
+          console.log(result);
+          res.send({name: result[0], DOB: result[1], breed: result[2], gender: result[3], species: result[4], vet: result[5]});
         });
         connection.callProcedure(request);
     })
