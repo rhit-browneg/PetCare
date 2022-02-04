@@ -27,6 +27,7 @@ rhit.UserController = class {
 			InputUser.value = "";
 			InputPassword.value = "";
 
+
 		};
 
 	}

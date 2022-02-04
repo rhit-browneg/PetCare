@@ -39,33 +39,34 @@ connection.on('connect', function(err) {
         request.addParameter('address',TYPES.VarChar,address);
         request.addParameter('number', TYPES.Int,phone);
         connection.callProcedure(request); 
-    }) 
+    }) ;
     app.post("/api/log",function(req,res){
       let user = req.body.user;
       let pass = req.body.pass;
-      // request = new Request('check_passwords', function(err) {  
-      //   if (err) {  
-      //       console.log(err);}  
-      //   });  
-      //   request.addParameter('username',TYPES.NVarChar,user);
-      //   let salt = null;
-      //   let hash = null;
-      //   request.on('row', (columns) => {
-      //     salt = columns[0].value;
-      //     hash = columns[1].value;
-      //   });
-      //   request.on('doneInProc', (rowCount, more, rows) => {
-      //     console.log(rowCount + ' rows returned');
-      //     console.log(salt + ' ' + hash);
-      //   });
-      //   request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
-      //     console.log("done");
-      //     let hashedpass = hashPassword(pass, salt);
-      //     console.log(pass);
-      //     console.log(hashedpass);
-      //     console.log(hashedpass ===hash)
-      //   });
-      //   connection.callProcedure(request);
+      request = new Request('check_passwords', function(err) {  
+        if (err) {  
+            console.log(err);}  
+        });  
+        request.addParameter('username',TYPES.NVarChar,user);
+        let salt = null;
+        let hash = null;
+        request.on('row', (columns) => {
+          salt = columns[0].value;
+          hash = columns[1].value;
+        });
+        request.on('doneInProc', (rowCount, more, rows) => {
+          console.log(rowCount + ' rows returned');
+          console.log(salt + ' ' + hash);
+        });
+        request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
+          console.log("done");
+          let hashedpass = hashPassword(pass, salt);
+          console.log(pass);
+          console.log(hashedpass);
+          console.log(hashedpass ===hash);
+          connection.callProcedure(request);
+        });
+        
       request = new Request('get_pet_info', function(err) {  
         if (err) {  
             console.log(err);}  
