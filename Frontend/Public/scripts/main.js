@@ -1,6 +1,6 @@
 var rhit = rhit || {};
 const userUrl = "http://localhost:3000/api/";
-
+let username = "";
 
 rhit.UserController = class {
 	constructor(){
@@ -12,22 +12,33 @@ rhit.UserController = class {
 			const InputAddress = document.querySelector("#inputAddress");
 			const InputPhone = document.querySelector("#inputPhone");
 			this.register(InputUser.value,InputPassword.value,InputFName.value,InputLName.value,InputAddress.value,InputPhone.value);
+			username = InputUser.value;
 			InputUser.value = "";
 			InputPassword.value = "";
 			InputFName.value = "";
 			InputLName.value = "";
 			InputAddress.value = "";
 			InputPhone.value = "";
+			document.querySelector("#loginbutton").innerHTML = "Account";			
+			document.querySelector("#loginbutton").removeAttribute("data-target");
+			
 
 		};
 		document.querySelector("#Login").onclick = (event) => {
 			const InputUser = document.querySelector("#inputExistUser");
 			const InputPassword = document.querySelector("#inputExistPassword");
 			this.login(InputUser.value,InputPassword.value);
+			username = InputUser.value;
 			InputUser.value = "";
 			InputPassword.value = "";
+            document.querySelector("#loginbutton").innerHTML = "Account";			
+			document.querySelector("#loginbutton").removeAttribute("data-target");
+            
 
-
+		};
+		document.querySelector("#loginbutton").onclick = (event) => {
+			if(document.querySelector("#loginbutton").innerHTML=="Account")
+			window.open("account.html","_self");
 		};
 
 	}
@@ -87,6 +98,11 @@ rhit.UserController = class {
 	}
 	 
 };
+rhit.AccountController = class {
+    constructor(){
+         document.querySelector("#username").innerHTML = username;
+      }
+};
 
 
 /* Main */
@@ -95,7 +111,9 @@ rhit.main = function () {
 	console.log("Ready");
 	if (document.querySelector("#mainPage")) {
 		new rhit.UserController();
-
+	}
+	if (document.querySelector("#accountPage")) {
+		new rhit.AccountController();
 	}
 };
 

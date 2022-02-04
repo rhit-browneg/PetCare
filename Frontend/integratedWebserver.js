@@ -63,11 +63,11 @@ connection.on('connect', function(err) {
           let hashedpass = hashPassword(pass, salt);
           console.log(pass);
           console.log(hashedpass);
-          console.log(hashedpass ===hash);
+          console.log(hashedpass === hash);
           
         });
         connection.callProcedure(request);
-      request = new Request('get_pet_info', function(err) {  
+       request = new Request('get_pet_info', function(err) {  
         if (err) {  
             console.log(err);}  
         });  
