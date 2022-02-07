@@ -30,7 +30,6 @@ rhit.UserController = class {
 			this.login(InputUser.value,InputPassword.value);
 			InputUser.value = "";
 			InputPassword.value = "";
-            document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
 		};
 
 		document.querySelector("#loginbutton").onclick = (event) => {
@@ -90,6 +89,9 @@ rhit.UserController = class {
 						if (Response.pwordhash === Response.hash) {
 							window.location.href= `/account.html?user=${user}`;
 						}
+					}
+					else{
+						document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
 					}
 				})
 				.catch((err) => {

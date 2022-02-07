@@ -63,3 +63,8 @@ body {
     background-color: #0987a3a6;
     margin-bottom: 10px;
 }
+
+#homepage {
+   margin: auto;
+   color: black;
+  }
