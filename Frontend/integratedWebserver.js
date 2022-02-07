@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 var crypto = require('crypto');
+const { json } = require('express');
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.urlencoded({
     extended: true
@@ -48,39 +49,42 @@ connection.on('connect', function(err) {
             console.log(err);}  
         });  
         request.addParameter('username',TYPES.NVarChar,user);
+        var json = {};
         let salt = null;
         let hash = null;
         request.on('row', (columns) => {
           salt = columns[0].value;
           hash = columns[1].value;
-        });
-        request.on('doneInProc', (rowCount, more, rows) => {
-          console.log(rowCount + ' rows returned');
-          console.log(salt + ' ' + hash);
+          json[columns[1].metadata.colName] = columns[1].value;
         });
         request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
           console.log("done");
-          let hashedpass = hashPassword(pass, salt);
-          console.log(pass);
-          console.log(hashedpass);
-          console.log(hashedpass === hash);
-          
+          if (pass != null && hash != null) {
+            let hashedpass = hashPassword(pass, salt);
+            json["hash"] = hashedpass;
+          }
+          res.send(json);
         });
         connection.callProcedure(request);
-       request = new Request('get_pet_info', function(err) {  
+    })
+    app.post("/api/getpets", function(req, res){
+      let user = req.body.user;
+      request = new Request('get_pet_info', function(err) {  
         if (err) {  
             console.log(err);}  
         });  
-        var result = [];
+        jsonArray = [];
         request.addParameter('username',TYPES.NVarChar,user);
         request.on('row', (columns) => {
-          columns.forEach(column => {
-            result.push(column.value);
+          var pet ={};
+          columns.forEach(function(column) {
+              pet[column.metadata.colName] = column.value;
           });
+          jsonArray.push(pet)
         });
         request.on('doneProc', function (rowCount, more, returnStatus, rows) { 
-          console.log(result);
-          res.send({name: result[0], DOB: result[1], breed: result[2], gender: result[3], species: result[4], vet: result[5]});
+          console.log(jsonArray);
+          res.send(jsonArray);
         });
         connection.callProcedure(request);
     })

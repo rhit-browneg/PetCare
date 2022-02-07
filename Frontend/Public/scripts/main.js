@@ -28,17 +28,14 @@ rhit.UserController = class {
 			const InputUser = document.querySelector("#inputExistUser");
 			const InputPassword = document.querySelector("#inputExistPassword");
 			this.login(InputUser.value,InputPassword.value);
-			username = InputUser.value;
 			InputUser.value = "";
 			InputPassword.value = "";
-            document.querySelector("#loginbutton").innerHTML = "Account";			
-			document.querySelector("#loginbutton").removeAttribute("data-target");
-            
-
+            document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
 		};
+
 		document.querySelector("#loginbutton").onclick = (event) => {
 			if(document.querySelector("#loginbutton").innerHTML=="Account")
-			window.open("account.html","_self");
+			window.location.href= `/account.html?user=${username}`;
 		};
 
 	}
@@ -88,19 +85,23 @@ rhit.UserController = class {
 				.then (Response => {
 					console.log("got response");
 					console.log(Response);
-					document.querySelector("#pName").value = Response.name;
-					document.querySelector("#DOB").value = Response.DOB;
-					document.querySelector("#breed").value = Response.breed;
-					document.querySelector("#gender").value = Response.gender;
-					document.querySelector("#species").value = Response.species;
-					document.querySelector("#vet").value = Response.vet;
+					const isEmpty = Object.keys(Response).length === 0;
+					if (!isEmpty) {
+						if (Response.pwordhash === Response.hash) {
+							window.location.href= `/account.html?user=${user}`;
+						}
+					}
 				})
+				.catch((err) => {
+					console.log(err);
+				});
 	}
 	 
 };
 rhit.AccountController = class {
-    constructor(){
-         document.querySelector("#username").innerHTML = username;
+    constructor(user){
+		 username = user;
+		 console.log("User: " + username);
       }
 };
 
@@ -113,7 +114,11 @@ rhit.main = function () {
 		new rhit.UserController();
 	}
 	if (document.querySelector("#accountPage")) {
-		new rhit.AccountController();
+		console.log("On the account page");
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const user = urlParams.get("user");
+		new rhit.AccountController(user);
 	}
 };
 
