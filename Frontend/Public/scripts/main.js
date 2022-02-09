@@ -12,7 +12,6 @@ rhit.UserController = class {
 			const InputAddress = document.querySelector("#inputAddress");
 			const InputPhone = document.querySelector("#inputPhone");
 			this.register(InputUser.value,InputPassword.value,InputFName.value,InputLName.value,InputAddress.value,InputPhone.value);
-			username = InputUser.value;
 			InputUser.value = "";
 			InputPassword.value = "";
 			InputFName.value = "";
@@ -25,13 +24,14 @@ rhit.UserController = class {
 
 		};
 		document.querySelector("#Login").onclick = (event) => {
+			
 			const InputUser = document.querySelector("#inputExistUser");
 			const InputPassword = document.querySelector("#inputExistPassword");
 			this.login(InputUser.value,InputPassword.value);
 			InputUser.value = "";
 			InputPassword.value = "";
 		};
-
+        
 		document.querySelector("#loginbutton").onclick = (event) => {
 			if(document.querySelector("#loginbutton").innerHTML=="Account")
 			window.location.href= `/account.html?user=${username}`;
@@ -58,8 +58,20 @@ rhit.UserController = class {
 					},
 					body: JSON.stringify(data)
 				})
+				.then(Response => Response.json())
+				.then(Response =>{
+					const isEmpty = Object.keys(Response).length === 0;
+					console.log(Response);
+					if (!isEmpty) {
+					window.location.href= `/account.html?user=${user}`;
+					}
+					else{
+						document.querySelector("#RegisterLabel").innerHTML = "Registration Failed: Please try again"
+					}
+				})
 				.catch((err) => {
 					console.log(err);
+					
 				});
 		
 
@@ -89,6 +101,9 @@ rhit.UserController = class {
 						if (Response.pwordhash === Response.hash) {
 							window.location.href= `/account.html?user=${user}`;
 						}
+						else{
+							document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
+						}
 					}
 					else{
 						document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
@@ -104,6 +119,14 @@ rhit.AccountController = class {
     constructor(user){
 		 username = user;
 		 console.log("User: " + username);
+		 let entry = fetch(userUrl + "user/" + username)
+		 .then(response => response.json())
+		 .then(data => {
+			 document.querySelector("#username").innerHTML = user;
+			 document.querySelector("#Name").innerHTML = data.FName +" "+  data.LName;
+			 document.querySelector("#Address").innerHTML = data.Address;
+			 document.querySelector("#Phone").innerHTML = data.Phone;
+		 });
       }
 };
 
