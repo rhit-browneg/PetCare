@@ -2,6 +2,13 @@ var rhit = rhit || {};
 const userUrl = "http://localhost:3000/api/";
 let username = "";
 
+function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim();
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
 rhit.UserController = class {
 	constructor(){
 		document.querySelector("#Register").onclick = (event) => {
@@ -128,7 +135,75 @@ rhit.AccountController = class {
 			 document.querySelector("#Phone").innerHTML = data.Phone;
 		 });
       }
+
 };
+
+rhit.PetController = class {
+	constructor(user){
+		const newList = htmlToElement('<div id = "petListContainer"></div>');
+		newList.append(this.createPetCard());
+				// // Make a new quoteListContainer
+				// const newList = htmlToElement('<div id = "restaurantListContainer"></div>');
+				// for (let i = 0; i < rhit.fbRestaurantsManager.length; i++){
+				// 	const restaurant = rhit.fbRestaurantsManager.getRestaurantAtIndex(i);
+		
+				// 	rhit.fbSingleRestaurantManager = new rhit.fbSingleRestaurantManager(restaurant.id, restaurant.name, restaurant.author);
+				// 	for(let x = 0; x < rhit.FbSingleRestaurantManager.length; x++){	
+				// 	const review = rhit.fbSingleRestaurantManager.getReviewAtIndex(x);
+				// 	if (review.author == this.rhit.FbAuthManager.uid){
+				// 		const newCard = this._createRestaurantCard(review);
+				// 		newCard.onclick = (event) => {
+				// 			// window.location.href = `/reviews.html?name=${restaurant.name}&author=${restaurant.author}&id=${restaurant.id}`;
+				// 		};
+				// 		newList.appendChild(newCard);
+				// 		}
+				// 	}
+					
+					
+					
+				// }
+		
+				//Remove the old quoteListContainer
+				const oldList = document.querySelector("#petListContainer");
+				oldList.removeAttribute("id");
+				oldList.hidden = true;
+				//Put in the new quoteListContauner
+				oldList.parentElement.appendChild(newList);
+	}
+	createPetCard(){
+		return htmlToElement(      
+		`<div class="card petcards" style="width: 25rem;">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="pName">Pet Name</label>
+            <input type="text" class="form-control" id="pName" placeholder="Pet Name">
+          </div>
+          <div class="form-group">
+            <label for="DOB">Birthday</label>
+            <input type="text" class="form-control" id="DOB" placeholder="Birthday">
+          </div>
+          <div class="form-group">
+            <label for="breed">Breed</label>
+            <input type="text" class="form-control" id="breed" placeholder="Breed">
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <input type="text" class="form-control" id="gender" placeholder="Gender">
+          </div>
+          <div class="form-group">
+            <label for="species">Species</label>
+            <input type="text" class="form-control" id="species" placeholder="Species">
+          </div>
+          <div class="form-group">
+            <label for="vet">Vet</label>
+            <input type="text" class="form-control" id="vet" placeholder="Vet">
+          </div>
+        </div>
+      </div>
+		*/`);
+	}
+};
+
 
 
 /* Main */
@@ -144,6 +219,13 @@ rhit.main = function () {
 		const urlParams = new URLSearchParams(queryString);
 		const user = urlParams.get("user");
 		new rhit.AccountController(user);
+	}
+	if (document.querySelector("#petPage")) {
+		console.log("On the pet page");
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const user = urlParams.get("user");
+		new rhit.PetController(user);
 	}
 };
 
