@@ -77,28 +77,29 @@ connection.on('connect', function (err) {
     });
     connection.callProcedure(request);
   })
-  app.post("/api/getpets", function (req, res) {
+  app.post("/api/addpet", function (req, res) {
     let user = req.body.user;
-    request = new Request('get_pet_info', function (err) {
+    let type = req.body.type;
+    let sex = req.body.sex;
+    let breed = req.body.breed;
+    let dob = req.body.dob;
+    let clinicName = req.body.clinicName;
+    let ownerusername = req.body.ownerusername;
+    request = new Request('add_pet', function (err) {
       if (err) {
         console.log(err);
       }
-    });
-    jsonArray = [];
-    request.addParameter('username', TYPES.NVarChar, user);
-    request.on('row', (columns) => {
-      var pet = {};
-      columns.forEach(function (column) {
-        pet[column.metadata.colName] = column.value;
-      });
-      jsonArray.push(pet)
-    });
-    request.on('doneProc', function (rowCount, more, returnStatus, rows) {
-      console.log(jsonArray);
-      res.send(jsonArray);
-    });
-    connection.callProcedure(request);
-  })
+
+  });
+  request.addParameter('petName', TYPES.NVarChar, user);
+  request.addParameter('type', TYPES.VarChar, type);
+  request.addParameter('sex', TYPES.VarChar, sex);
+  request.addParameter('breed', TYPES.VarChar, breed);
+  request.addParameter('dob', TYPES.Date, dob);
+  request.addParameter('clinicName', TYPES.VarChar, clinicName);
+  request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+connection.callProcedure(request);
+});
   app.get("/api/user/:id", function (req, res) {
     let user = req.params.id;
     let FName = null;
@@ -129,6 +130,28 @@ connection.on('connect', function (err) {
     connection.callProcedure(request);
 
   });
+  app.post("/api/getpets", function (req, res) {
+    let user = req.body.user;
+    request = new Request('get_pet_info', function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
+    jsonArray = [];
+    request.addParameter('username', TYPES.NVarChar, user);
+    request.on('row', (columns) => {
+      var pet = {};
+      columns.forEach(function (column) {
+        pet[column.metadata.colName] = column.value;
+      });
+      jsonArray.push(pet)
+    });
+    request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+      console.log(jsonArray);
+      res.send(jsonArray);
+    });
+    connection.callProcedure(request);
+  })
 });
 
 connection.connect();
