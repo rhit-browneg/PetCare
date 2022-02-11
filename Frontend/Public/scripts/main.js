@@ -3,14 +3,14 @@ const userUrl = "http://localhost:3000/api/";
 let username = "";
 
 function htmlToElement(html) {
-    var template = document.createElement('template');
-    html = html.trim();
-    template.innerHTML = html;
-    return template.content.firstChild;
+	var template = document.createElement('template');
+	html = html.trim();
+	template.innerHTML = html;
+	return template.content.firstChild;
 }
 
 rhit.UserController = class {
-	constructor(){
+	constructor() {
 		document.querySelector("#Register").onclick = (event) => {
 			const InputUser = document.querySelector("#inputUser");
 			const InputPassword = document.querySelector("#inputPassword");
@@ -18,185 +18,240 @@ rhit.UserController = class {
 			const InputLName = document.querySelector("#inputLName");
 			const InputAddress = document.querySelector("#inputAddress");
 			const InputPhone = document.querySelector("#inputPhone");
-			this.register(InputUser.value,InputPassword.value,InputFName.value,InputLName.value,InputAddress.value,InputPhone.value);
+			this.register(InputUser.value, InputPassword.value, InputFName.value, InputLName.value, InputAddress.value, InputPhone.value);
 			InputUser.value = "";
 			InputPassword.value = "";
 			InputFName.value = "";
 			InputLName.value = "";
 			InputAddress.value = "";
 			InputPhone.value = "";
-			document.querySelector("#loginbutton").innerHTML = "Account";			
+			document.querySelector("#loginbutton").innerHTML = "Account";
 			document.querySelector("#loginbutton").removeAttribute("data-target");
-			
+
 
 		};
 		document.querySelector("#Login").onclick = (event) => {
-			
+
 			const InputUser = document.querySelector("#inputExistUser");
 			const InputPassword = document.querySelector("#inputExistPassword");
-			this.login(InputUser.value,InputPassword.value);
+			this.login(InputUser.value, InputPassword.value);
 			InputUser.value = "";
 			InputPassword.value = "";
 		};
-        
+
 		document.querySelector("#loginbutton").onclick = (event) => {
-			if(document.querySelector("#loginbutton").innerHTML=="Account")
-			window.location.href= `/account.html?user=${username}`;
+			if (document.querySelector("#loginbutton").innerHTML == "Account")
+				window.location.href = `/account.html?user=${username}`;
 		};
 
 	}
-	register(user,pass,fName,lName,address,phone) {
+	register(user, pass, fName, lName, address, phone) {
 		if (!user) {
 			console.log("No user provided.  Ignoring request.");
 			return;
 		}
 		let data = {
-				"user": user,
-				"pass": pass,
-				"fName" : fName,
-				"lName" : lName,
-				"address" : address,
-				"phone" : phone
-			};
-			let entry = fetch(userUrl+"reg/", {
-					method: "POST",
-					headers: {
-						"Content-Type": 'application/json'
-					},
-					body: JSON.stringify(data)
-				})
-				.then(Response => Response.json())
-				.then(Response =>{
-					const isEmpty = Object.keys(Response).length === 0;
-					console.log(Response);
-					if (!isEmpty) {
-					window.location.href= `/account.html?user=${user}`;
-					}
-					else{
-						document.querySelector("#RegisterLabel").innerHTML = "Registration Failed: Please try again"
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-					
-				});
-		
+			"user": user,
+			"pass": pass,
+			"fName": fName,
+			"lName": lName,
+			"address": address,
+			"phone": phone
+		};
+		let entry = fetch(userUrl + "reg/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				const isEmpty = Object.keys(Response).length === 0;
+				console.log(Response);
+				if (!isEmpty) {
+					window.location.href = `/account.html?user=${user}`;
+				} else {
+					document.querySelector("#RegisterLabel").innerHTML = "Registration Failed: Please try again"
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+
 
 	}
-	login(user,pass) {
+	login(user, pass) {
 		if (!user) {
 			console.log("No user provided.  Ignoring request.");
 			return;
 		}
 		let data = {
-				"user": user,
-				"pass": pass,
-			};
-			let entry = fetch(userUrl+"log/", {
-					method: "POST",
-					headers: {
-						"Content-Type": 'application/json'
-					},
-					body: JSON.stringify(data)
-				})
-				.then( Response => Response.json() )
-				.then (Response => {
-					console.log("got response");
-					console.log(Response);
-					const isEmpty = Object.keys(Response).length === 0;
-					if (!isEmpty) {
-						if (Response.pwordhash === Response.hash) {
-							window.location.href= `/account.html?user=${user}`;
-						}
-						else{
-							document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
-						}
-					}
-					else{
+			"user": user,
+			"pass": pass,
+		};
+		let entry = fetch(userUrl + "log/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log("got response");
+				console.log(Response);
+				const isEmpty = Object.keys(Response).length === 0;
+				if (!isEmpty) {
+					if (Response.pwordhash === Response.hash) {
+						window.location.href = `/account.html?user=${user}`;
+					} else {
 						document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
 					}
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+				} else {
+					document.querySelector("#loginLabel").innerHTML = "Invalid Login, try again";
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
-	 
+
 };
 rhit.AccountController = class {
-    constructor(user){
-		 username = user;
-		 console.log("User: " + username);
-		 let entry = fetch(userUrl + "user/" + username)
-		 .then(response => response.json())
-		 .then(data => {
-			 document.querySelector("#username").innerHTML = user;
-			 document.querySelector("#Name").innerHTML = data.FName +" "+  data.LName;
-			 document.querySelector("#Address").innerHTML = data.Address;
-			 document.querySelector("#Phone").innerHTML = data.Phone;
-		 });
-      }
+	constructor(user) {
+		username = user;
+		console.log("User: " + username);
+		let entry = fetch(userUrl + "user/" + username)
+			.then(response => response.json())
+			.then(data => {
+				document.querySelector("#username").innerHTML = user;
+				document.querySelector("#Name").innerHTML = data.FName + " " + data.LName;
+				document.querySelector("#Address").innerHTML = data.Address;
+				document.querySelector("#Phone").innerHTML = data.Phone;
+			});
+		document.querySelector("#clickpets").onclick = (event) => {
+			window.location.href = `/petinfo.html?user=${user}`;
+		};
+	}
 
 };
 
 rhit.PetController = class {
-	constructor(user){
+	constructor(user) {
+		username = user;
 		const newList = htmlToElement('<div id = "petListContainer"></div>');
-		newList.append(this.createPetCard());
-				// // Make a new quoteListContainer
-				// const newList = htmlToElement('<div id = "restaurantListContainer"></div>');
-				// for (let i = 0; i < rhit.fbRestaurantsManager.length; i++){
-				// 	const restaurant = rhit.fbRestaurantsManager.getRestaurantAtIndex(i);
-		
-				// 	rhit.fbSingleRestaurantManager = new rhit.fbSingleRestaurantManager(restaurant.id, restaurant.name, restaurant.author);
-				// 	for(let x = 0; x < rhit.FbSingleRestaurantManager.length; x++){	
-				// 	const review = rhit.fbSingleRestaurantManager.getReviewAtIndex(x);
-				// 	if (review.author == this.rhit.FbAuthManager.uid){
-				// 		const newCard = this._createRestaurantCard(review);
-				// 		newCard.onclick = (event) => {
-				// 			// window.location.href = `/reviews.html?name=${restaurant.name}&author=${restaurant.author}&id=${restaurant.id}`;
-				// 		};
-				// 		newList.appendChild(newCard);
-				// 		}
-				// 	}
-					
-					
-					
-				// }
-		
+		let data = {
+			"user": user,
+		};
+		let entry = fetch(userUrl + "getpets/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log("got response");
+				console.log(Response);
+				for (let x = 0; x < Response.length; x++) {
+					const newCard = this.createPetCard(Response[x].Name, Response[x].DOB, Response[x].breed, Response[x].gender, Response[x].Species, "vet");
+					newList.append(newCard);
+					// 		newCard.onclick = (event) => {
+					// 			// window.location.href = `/reviews.html?name=${restaurant.name}&author=${restaurant.author}&id=${restaurant.id}`;
+					// 		};
+				}
 				//Remove the old quoteListContainer
 				const oldList = document.querySelector("#petListContainer");
 				oldList.removeAttribute("id");
 				oldList.hidden = true;
 				//Put in the new quoteListContauner
 				oldList.parentElement.appendChild(newList);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			document.querySelector("#account").onclick = (event) => {
+				window.location.href = `/account.html?user=${user}`;
+			};
+			document.querySelector("#Add").onclick = (event) => {
+				const InputUser = document.querySelector("#pName");
+				const InputPassword = document.querySelector("#DOB");
+				const InputFName = document.querySelector("#breed");
+				const InputLName = document.querySelector("#gender");
+				const InputAddress = document.querySelector("#species");
+				const InputPhone = document.querySelector("#vet");
+				this.addPet(InputUser.value, InputPassword.value, InputFName.value, InputLName.value, InputAddress.value, InputPhone.value, user);
+				InputUser.value = "";
+				InputPassword.value = "";
+				InputFName.value = "";
+				InputLName.value = "";
+				InputAddress.value = "";
+				InputPhone.value = "";	
+	
+			};
 	}
-	createPetCard(){
-		return htmlToElement(      
-		`<div class="card petcards" style="width: 25rem;">
+	addPet(petName, type, sex, breed, dob, clinicName, ownerusername) {
+		if (!petName) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"petName": petName,
+			"type": type,
+			"sex": sex,
+			"breed": breed,
+			"dob": new Date(dob),
+			"clinicName": clinicName,
+			"ownerusername": ownerusername
+		};
+		let entry = fetch(userUrl + "addpet/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log(Response);
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+
+
+	}
+	createPetCard(name, dob, breed, gender, species, vet) {
+		return htmlToElement(
+			`<div class="card petcards" style="width: 25rem;">
         <div class="card-body">
           <div class="form-group">
             <label for="pName">Pet Name</label>
-            <input type="text" class="form-control" id="pName" placeholder="Pet Name">
+            <input type="text" class="form-control" id="pName" placeholder=${name}>
           </div>
           <div class="form-group">
             <label for="DOB">Birthday</label>
-            <input type="text" class="form-control" id="DOB" placeholder="Birthday">
+            <input type="text" class="form-control" id="DOB" placeholder=${dob}>
           </div>
           <div class="form-group">
             <label for="breed">Breed</label>
-            <input type="text" class="form-control" id="breed" placeholder="Breed">
+            <input type="text" class="form-control" id="breed" placeholder=${breed}>
           </div>
           <div class="form-group">
             <label for="gender">Gender</label>
-            <input type="text" class="form-control" id="gender" placeholder="Gender">
+            <input type="text" class="form-control" id="gender" placeholder=${gender}>
           </div>
           <div class="form-group">
             <label for="species">Species</label>
-            <input type="text" class="form-control" id="species" placeholder="Species">
+            <input type="text" class="form-control" id="species" placeholder=${species}>
           </div>
           <div class="form-group">
             <label for="vet">Vet</label>
-            <input type="text" class="form-control" id="vet" placeholder="Vet">
+            <input type="text" class="form-control" id="vet" placeholder=${vet}>
           </div>
         </div>
       </div>

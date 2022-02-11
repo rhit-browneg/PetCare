@@ -18,12 +18,7 @@
     <a class="navbar-brand" id="title" style="font-size: 25px" href="#">Pet Care</a>
     <img src="Pictures/logo-removebg-preview (1).png" style="margin-left:-6em;margin-right: 10em;">
     <a class="navbar-brand links" href="#">Dogs</a>
-    <a class="navbar-brand links" href="#">Cats</a>
-    <a class="navbar-brand links" href="#">Fish</a>
-    <a class="navbar-brand links" href="#">Lizards</a>
-    <a class="navbar-brand links" href="#">Hamsters</a>
-    <a class="navbar-brand links" style="margin-right:10em" href="#">Vets</a>
-    <p class="navbar-brand" data-toggle="modal" data-target="#login" style="padding-top: 18px;">Login</p>
+    <a id = "account" class="navbar-brand links" href="#">Account</a>
 
   </nav>
   <div id="petPage" class="container page-container">
@@ -32,9 +27,49 @@
 
       <div id ="petListContainer">
       </div>
-
+      <button class="btn btn-dark" type="button" data-toggle="modal" data-target="#addPet">Add Pet</button>
       
     <!-- </div> -->
+    <div class="modal fade" id="addPet" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="RegisterLabel">Add Pet</h5>
+          </div>
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="pName">Pet Name</label>
+              <input type="text" class="form-control" id="pName" placeholder="Pet Name">
+            </div>
+            <div class="form-group">
+              <label for="DOB">Birthday</label>
+              <input type="text" class="form-control" id="DOB" placeholder="Birthday">
+            </div>
+            <div class="form-group">
+              <label for="breed">Breed</label>
+              <input type="text" class="form-control" id="breed" placeholder="Breed">
+            </div>
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <input type="text" class="form-control" id="gender" placeholder="Gender">
+            </div>
+            <div class="form-group">
+              <label for="species">Species</label>
+              <input type="text" class="form-control" id="species" placeholder="Species">
+            </div>
+            <div class="form-group">
+              <label for="vet">Vet</label>
+              <input type="text" class="form-control" id="vet" placeholder="Vet">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="cancel" type="button" class="btn" data-dismiss="modal">Cancel</button>
+            <button id="Add" type="button" class="btn">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
