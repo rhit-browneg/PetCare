@@ -71,5 +71,6 @@ body {
 
 .petcards {
     margin: auto;
+    margin-top: 10px;
     color: black;
 }

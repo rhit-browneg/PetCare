@@ -1,3 +1,4 @@
+
 var rhit = rhit || {};
 const userUrl = "http://localhost:3000/api/";
 let username = "";
@@ -157,7 +158,7 @@ rhit.PetController = class {
 				console.log("got response");
 				console.log(Response);
 				for (let x = 0; x < Response.length; x++) {
-					const newCard = this.createPetCard(Response[x].Name, Response[x].DOB, Response[x].breed, Response[x].gender, Response[x].Species, "vet");
+					const newCard = this.createPetCard(Response[x].Name, Response[x].Age, Response[x].breed, Response[x].gender, Response[x].Species, "vet");
 					newList.append(newCard);
 					// 		newCard.onclick = (event) => {
 					// 			// window.location.href = `/reviews.html?name=${restaurant.name}&author=${restaurant.author}&id=${restaurant.id}`;
@@ -177,23 +178,22 @@ rhit.PetController = class {
 				window.location.href = `/account.html?user=${user}`;
 			};
 			document.querySelector("#Add").onclick = (event) => {
-				const InputUser = document.querySelector("#pName");
-				const InputPassword = document.querySelector("#DOB");
-				const InputFName = document.querySelector("#breed");
-				const InputLName = document.querySelector("#gender");
-				const InputAddress = document.querySelector("#species");
-				const InputPhone = document.querySelector("#vet");
-				this.addPet(InputUser.value, InputPassword.value, InputFName.value, InputLName.value, InputAddress.value, InputPhone.value, user);
-				InputUser.value = "";
-				InputPassword.value = "";
-				InputFName.value = "";
-				InputLName.value = "";
-				InputAddress.value = "";
-				InputPhone.value = "";	
+				const InputName = document.querySelector("#pName");
+				const InputDOB = document.querySelector("#DOB");
+				const InputBreed = document.querySelector("#breed");
+				const InputGender = document.querySelector("#gender");
+				const InputSpecies = document.querySelector("#species");
+				console.log(InputName.value);
+				this.addPet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
+				InputName.value = "";
+				InputDOB.value = "";
+				InputBreed.value = "";
+				InputGender.value = "";
+				InputSpecies.value = "";
 	
 			};
 	}
-	addPet(petName, type, sex, breed, dob, clinicName, ownerusername) {
+	addPet(petName, type, sex, breed, dob, ownerusername) {
 		if (!petName) {
 			console.log("No user provided.  Ignoring request.");
 			return;
@@ -203,8 +203,7 @@ rhit.PetController = class {
 			"type": type,
 			"sex": sex,
 			"breed": breed,
-			"dob": new Date(dob),
-			"clinicName": clinicName,
+			"dob": dob,
 			"ownerusername": ownerusername
 		};
 		let entry = fetch(userUrl + "addpet/", {
@@ -231,27 +230,23 @@ rhit.PetController = class {
         <div class="card-body">
           <div class="form-group">
             <label for="pName">Pet Name</label>
-            <input type="text" class="form-control" id="pName" placeholder=${name}>
+            <input type="text" class="form-control" placeholder=${name}>
           </div>
           <div class="form-group">
-            <label for="DOB">Birthday</label>
-            <input type="text" class="form-control" id="DOB" placeholder=${dob}>
+            <label for="DOB">Age</label>
+            <input type="text" class="form-control" placeholder=${dob}>
           </div>
           <div class="form-group">
             <label for="breed">Breed</label>
-            <input type="text" class="form-control" id="breed" placeholder=${breed}>
+            <input type="text" class="form-control" placeholder=${breed}>
           </div>
           <div class="form-group">
             <label for="gender">Gender</label>
-            <input type="text" class="form-control" id="gender" placeholder=${gender}>
+            <input type="text" class="form-control" placeholder=${gender}>
           </div>
           <div class="form-group">
             <label for="species">Species</label>
-            <input type="text" class="form-control" id="species" placeholder=${species}>
-          </div>
-          <div class="form-group">
-            <label for="vet">Vet</label>
-            <input type="text" class="form-control" id="vet" placeholder=${vet}>
+            <input type="text" class="form-control" placeholder=${species}>
           </div>
         </div>
       </div>

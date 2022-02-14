@@ -78,25 +78,24 @@ connection.on('connect', function (err) {
     connection.callProcedure(request);
   })
   app.post("/api/addpet", function (req, res) {
-    let user = req.body.user;
+    let name = req.body.petName;
     let type = req.body.type;
     let sex = req.body.sex;
     let breed = req.body.breed;
     let dob = req.body.dob;
-    let clinicName = req.body.clinicName;
     let ownerusername = req.body.ownerusername;
+    console.log(name + " " + ownerusername);
     request = new Request('add_pet', function (err) {
       if (err) {
         console.log(err);
       }
 
   });
-  request.addParameter('petName', TYPES.NVarChar, user);
+  request.addParameter('petName', TYPES.NVarChar, name);
   request.addParameter('type', TYPES.VarChar, type);
   request.addParameter('sex', TYPES.VarChar, sex);
   request.addParameter('breed', TYPES.VarChar, breed);
   request.addParameter('dob', TYPES.Date, dob);
-  request.addParameter('clinicName', TYPES.VarChar, clinicName);
   request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
 connection.callProcedure(request);
 });
