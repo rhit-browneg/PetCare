@@ -17,7 +17,6 @@
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" id="title" style="font-size: 25px" href="#">Pet Care</a>
     <img src="Pictures/logo-removebg-preview (1).png" style="margin-left:-6em;margin-right: 10em;">
-    <a class="navbar-brand links" href="#">Dogs</a>
     <a id = "account" class="navbar-brand links" href="#">Account</a>
 
   </nav>
@@ -27,7 +26,9 @@
 
       <div id ="petListContainer">
       </div>
-      <button class="btn btn-dark" type="button" data-toggle="modal" data-target="#addPet">Add Pet</button>
+      <div class = "text-center">
+        <button id = "addpetbtn" class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#addPet">Add Pet</button>
+      </div>
       
     <!-- </div> -->
     <div class="modal fade" id="addPet" tabindex="-1" role="dialog">
@@ -61,7 +62,7 @@
           </div>
           <div class="modal-footer">
             <button id="cancel" type="button" class="btn" data-dismiss="modal">Cancel</button>
-            <button id="Add" type="button" class="btn">Add</button>
+            <button id="Add" type="button" class="btn" data-dismiss="modal">Add</button>
           </div>
         </div>
       </div>

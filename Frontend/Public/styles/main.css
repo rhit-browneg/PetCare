@@ -71,6 +71,14 @@ body {
 
 .petcards {
     margin: auto;
-    margin-top: 10px;
+    margin-bottom: 20px;
     color: black;
+}
+
+#addpetbtn {
+    background-color: white;
+    color: black;
+    margin-bottom: 20px;
+    justify-content: center;
+    font-size: 15px;
 }
