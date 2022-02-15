@@ -151,6 +151,50 @@ connection.callProcedure(request);
     });
     connection.callProcedure(request);
   })
+  app.post("/api/getpet", function (req, res) {
+    let user = req.body.user;
+    request = new Request('get_pet_info_dob', function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
+    jsonArray = [];
+    request.addParameter('username', TYPES.NVarChar, user);
+    request.on('row', (columns) => {
+      var pet = {};
+      columns.forEach(function (column) {
+        pet[column.metadata.colName] = column.value;
+      });
+      jsonArray.push(pet)
+    });
+    request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+      console.log(jsonArray);
+      res.send(jsonArray);
+    });
+    connection.callProcedure(request);
+  })
+  app.post("/api/editpet", function (req, res) {
+    let name = req.body.petName;
+    let type = req.body.type;
+    let sex = req.body.sex;
+    let breed = req.body.breed;
+    let dob = req.body.dob;
+    let ownerusername = req.body.ownerusername;
+    console.log(name + " " + ownerusername);
+    request = new Request('edit_pet', function (err) {
+      if (err) {
+        console.log(err);
+      }
+
+  });
+  request.addParameter('name', TYPES.NVarChar, name);
+  request.addParameter('type', TYPES.VarChar, type);
+  request.addParameter('sex', TYPES.VarChar, sex);
+  request.addParameter('breed', TYPES.VarChar, breed);
+  request.addParameter('dob', TYPES.Date, dob);
+  request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+connection.callProcedure(request);
+});
 });
 
 connection.connect();

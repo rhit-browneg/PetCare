@@ -158,11 +158,11 @@ rhit.PetController = class {
 				console.log("got response");
 				console.log(Response);
 				for (let x = 0; x < Response.length; x++) {
-					const newCard = this.createPetCard(Response[x].Name, Response[x].Age, Response[x].breed, Response[x].gender, Response[x].Species, "vet");
+					const newCard = this.createPetCard(Response[x].Name, Response[x].Age, Response[x].breed, Response[x].gender, Response[x].Species);
 					newList.append(newCard);
-					// 		newCard.onclick = (event) => {
-					// 			// window.location.href = `/reviews.html?name=${restaurant.name}&author=${restaurant.author}&id=${restaurant.id}`;
-					// 		};
+							newCard.onclick = (event) => {
+								window.location.href = `/petdetails.html?user=${user}&pet=${Response[x].Name}`;
+							};
 				}
 				//Remove the old quoteListContainer
 				const oldList = document.querySelector("#petListContainer");
@@ -224,29 +224,29 @@ rhit.PetController = class {
 
 
 	}
-	createPetCard(name, dob, breed, gender, species, vet) {
+	createPetCard(name, dob, breed, gender, species) {
 		return htmlToElement(
 			`<div class="card petcards" style="width: 25rem;">
         <div class="card-body">
           <div class="form-group">
             <label for="pName">Pet Name</label>
-            <input type="text" class="form-control" placeholder=${name}>
+            <h6>${name}</h6>
           </div>
           <div class="form-group">
             <label for="DOB">Age</label>
-            <input type="text" class="form-control" placeholder=${dob}>
+            <h6>${dob}</h6>
           </div>
           <div class="form-group">
             <label for="breed">Breed</label>
-            <input type="text" class="form-control" placeholder=${breed}>
+            <h6>${breed}</h6>
           </div>
           <div class="form-group">
             <label for="gender">Gender</label>
-            <input type="text" class="form-control" placeholder=${gender}>
+            <h6>${gender}</h6>
           </div>
           <div class="form-group">
             <label for="species">Species</label>
-            <input type="text" class="form-control" placeholder=${species}>
+            <h6>${species}</h6>
           </div>
         </div>
       </div>
@@ -254,6 +254,86 @@ rhit.PetController = class {
 	}
 };
 
+rhit.PetDetailsController = class {
+	constructor(user, pet) {
+		username = user;
+		const newList = htmlToElement('<div id = "petListContainer"></div>');
+		let data = {
+			"user": user,
+		};
+		let entry = fetch(userUrl + "getpet/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log("got response");
+				console.log(Response);
+				for (let x = 0; x < Response.length; x++) {
+					if (Response[x].Name === pet) {
+						document.querySelector("#pName").value = Response[x].Name;
+						document.querySelector("#DOB").value = (Response[x].DOB).substring(0,10);
+						document.querySelector("#breed").value = Response[x].breed;
+						document.querySelector("#gender").value = Response[x].gender;
+						document.querySelector("#species").value = Response[x].Species;
+					}
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			document.querySelector("#account").onclick = (event) => {
+				window.location.href = `/account.html?user=${user}`;
+			};
+			document.querySelector("#updatepet").onclick = (event) => {
+				const InputName = document.querySelector("#pName");
+				const InputDOB = document.querySelector("#DOB");
+				const InputBreed = document.querySelector("#breed");
+				const InputGender = document.querySelector("#gender");
+				const InputSpecies = document.querySelector("#species");
+				console.log(InputName.value);
+				this.updatePet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
+	
+			};
+			document.querySelector("#clickpets").onclick = (event) => {
+				window.location.href = `/petinfo.html?user=${user}`;
+			};
+	}
+	updatePet(petName, type, sex, breed, dob, ownerusername) {
+		if (!petName) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"petName": petName,
+			"type": type,
+			"sex": sex,
+			"breed": breed,
+			"dob": dob,
+			"ownerusername": ownerusername
+		};
+		let entry = fetch(userUrl + "editpet/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log(Response);
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+
+
+	}
+};
 
 
 /* Main */
@@ -276,6 +356,14 @@ rhit.main = function () {
 		const urlParams = new URLSearchParams(queryString);
 		const user = urlParams.get("user");
 		new rhit.PetController(user);
+	}
+	if (document.querySelector("#petdetails")) {
+		console.log("On the pet details page");
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const user = urlParams.get("user");
+		const pet = urlParams.get("pet");
+		new rhit.PetDetailsController(user, pet);
 	}
 };
 
