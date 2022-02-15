@@ -90,3 +90,19 @@ h6{
 .petcards label{
     font-weight: bolder;
 }
+#accountPage p{
+     text-align: center;
+     font-size: 24px;
+}
+#container{
+    text-align: center;
+}
+#accountPage button{
+    border: .5px solid #0968B5;
+    margin: 0 75px;
+    color: white;
+}
+#edit, #delete{
+    color:white;
+    font-family: 'Oswald';
+}

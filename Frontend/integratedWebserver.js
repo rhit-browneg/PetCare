@@ -9,6 +9,7 @@ const {
   json
 } = require('express');
 
+
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.urlencoded({
   extended: true
@@ -78,6 +79,9 @@ connection.on('connect', function (err) {
     connection.callProcedure(request);
   })
   app.post("/api/addpet", function (req, res) {
+    let data   ={
+      "user": req.body.ownerusername
+    }
     let name = req.body.petName;
     let type = req.body.type;
     let sex = req.body.sex;
@@ -90,15 +94,19 @@ connection.on('connect', function (err) {
         console.log(err);
       }
 
+    });
+    request.addParameter('petName', TYPES.NVarChar, name);
+    request.addParameter('type', TYPES.VarChar, type);
+    request.addParameter('sex', TYPES.VarChar, sex);
+    request.addParameter('breed', TYPES.VarChar, breed);
+    request.addParameter('dob', TYPES.Date, dob);
+    request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+    request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+      res.send(data);
+      res.end;
+    });
+    connection.callProcedure(request);
   });
-  request.addParameter('petName', TYPES.NVarChar, name);
-  request.addParameter('type', TYPES.VarChar, type);
-  request.addParameter('sex', TYPES.VarChar, sex);
-  request.addParameter('breed', TYPES.VarChar, breed);
-  request.addParameter('dob', TYPES.Date, dob);
-  request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
-connection.callProcedure(request);
-});
   app.get("/api/user/:id", function (req, res) {
     let user = req.params.id;
     let FName = null;
@@ -120,9 +128,9 @@ connection.callProcedure(request);
     request.on('doneProc', function (rowCount, more, returnStatus, rows) {
       let result = {
         "FName": FName,
-        "LName" :LName,
+        "LName": LName,
         "Address": Address,
-        "Phone" : Phone
+        "Phone": Phone
       }
       res.send(result);
     });
@@ -148,6 +156,7 @@ connection.callProcedure(request);
     request.on('doneProc', function (rowCount, more, returnStatus, rows) {
       console.log(jsonArray);
       res.send(jsonArray);
+      res.end();
     });
     connection.callProcedure(request);
   })
@@ -170,6 +179,7 @@ connection.callProcedure(request);
     request.on('doneProc', function (rowCount, more, returnStatus, rows) {
       console.log(jsonArray);
       res.send(jsonArray);
+      res.end();
     });
     connection.callProcedure(request);
   })
@@ -195,6 +205,42 @@ connection.callProcedure(request);
   request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
 connection.callProcedure(request);
 });
+app.put("/api/editUser/:id", function (req, res) {
+  let oldusername = req.params.id;
+  let fname = req.body.fName;
+  let lname = req.body.lName;
+  let address = req.body.address;
+  let phoneNum = req.body.phone;
+  request = new Request('edit_user', function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+  request.addParameter('currentUsername', TYPES.NVarChar, oldusername);
+  request.addParameter('FName', TYPES.VarChar, fname);
+  request.addParameter('LName', TYPES.VarChar, lname);
+  request.addParameter('Address', TYPES.NVarChar, address);
+  request.addParameter('PhoneNumber', TYPES.VarChar, phoneNum);
+  request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+    let setData = {
+      "user": oldusername
+    }
+    res.send(setData);
+    res.end();
+  });
+  connection.callProcedure(request);
+});
+app.delete("/api/deleteUser/:id",function(req,res){
+let user = req.params.id;
+request = new Request('delete_user', function (err) {
+  if (err) {
+    console.log(err);
+  }
+});
+request.addParameter('username',TYPES.NVarChar,user);
+connection.callProcedure(request);
+
+})
 });
 
 connection.connect();

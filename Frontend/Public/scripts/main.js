@@ -124,24 +124,96 @@ rhit.AccountController = class {
 	constructor(user) {
 		username = user;
 		console.log("User: " + username);
-		let entry = fetch(userUrl + "user/" + username)
-			.then(response => response.json())
-			.then(data => {
-				document.querySelector("#username").innerHTML = user;
-				document.querySelector("#Name").innerHTML = data.FName + " " + data.LName;
-				document.querySelector("#Address").innerHTML = data.Address;
-				document.querySelector("#Phone").innerHTML = data.Phone;
-			});
+		this.getUser(username);
+		document.querySelector("#Edit").onclick = (event) =>{
+			const EditFName = document.querySelector("#inputAccountFName");
+			const EditLName = document.querySelector("#inputAccountLName");
+			const EditAddress = document.querySelector("#inputAccountAddress");
+			const EditPhone = document.querySelector("#inputAccountPhone");
+			this.editUser(EditFName.value,EditLName.value,EditAddress.value,EditPhone.value);
+		};
+		document.querySelector("#Delete").onclick = (event) =>{
+			this.delete(username);
+			window.location.href = `/index.html`;
+		}
 		document.querySelector("#clickpets").onclick = (event) => {
 			window.location.href = `/petinfo.html?user=${user}`;
 		};
 	}
-
+	getUser(username){
+		let entry = fetch(userUrl + "user/" + username)
+			.then(response => response.json())
+			.then(data => {
+				document.querySelector("#username").innerHTML = "Account: " + username;
+				document.querySelector("#Name").innerHTML = "Name: " + data.FName + " " + data.LName;
+				document.querySelector("#Address").innerHTML ="Address: " + data.Address;
+				document.querySelector("#Phone").innerHTML = "Phone: " + data.Phone;
+				document.querySelector("#inputAccountFName").value = data.FName;
+				document.querySelector("#inputAccountLName").value = data.LName;
+				document.querySelector("#inputAccountAddress").value = data.Address;
+				document.querySelector("#inputAccountPhone").value = data.Phone;
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+    editUser(newFName,newLName,newAddress,newPhoneNum){
+		let d = {
+			"fName": newFName,
+			"lName": newLName,
+			"address": newAddress,
+			"phone" : newPhoneNum
+		};
+		fetch(userUrl+ "editUser/" + username, {
+			method: "PUT",
+			headers: {
+				"Content-Type": 'application/json'
+			},
+			body: JSON.stringify(d)
+		})
+		.then(response => response.json())
+		.then(data =>{
+           this.getUser(data.user);
+		})
+		.catch(err => {
+			console.log(err);
+		});
+	}
+	delete(username){
+		fetch(userUrl + "deleteUser/" + username, {
+            method: "DELETE"
+        })
+        .catch(err => {
+            console.log(err);
+        });  
+	}
 };
 
 rhit.PetController = class {
 	constructor(user) {
 		username = user;
+		    this.getPet(username);
+			document.querySelector("#account").onclick = (event) => {
+				window.location.href = `/account.html?user=${user}`;
+			};
+			document.querySelector("#Add").onclick = (event) => {
+				const InputName = document.querySelector("#pName");
+				const InputDOB = document.querySelector("#DOB");
+				const InputBreed = document.querySelector("#breed");
+				const InputGender = document.querySelector("#gender");
+				const InputSpecies = document.querySelector("#species");
+				console.log(InputName.value);
+				this.addPet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
+				
+				InputName.value = "";
+				InputDOB.value = "";
+				InputBreed.value = "";
+				InputGender.value = "";
+				InputSpecies.value = "";
+	
+			};
+	}
+	getPet(user){
 		const newList = htmlToElement('<div id = "petListContainer"></div>');
 		let data = {
 			"user": user,
@@ -174,24 +246,6 @@ rhit.PetController = class {
 			.catch((err) => {
 				console.log(err);
 			});
-			document.querySelector("#account").onclick = (event) => {
-				window.location.href = `/account.html?user=${user}`;
-			};
-			document.querySelector("#Add").onclick = (event) => {
-				const InputName = document.querySelector("#pName");
-				const InputDOB = document.querySelector("#DOB");
-				const InputBreed = document.querySelector("#breed");
-				const InputGender = document.querySelector("#gender");
-				const InputSpecies = document.querySelector("#species");
-				console.log(InputName.value);
-				this.addPet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
-				InputName.value = "";
-				InputDOB.value = "";
-				InputBreed.value = "";
-				InputGender.value = "";
-				InputSpecies.value = "";
-	
-			};
 	}
 	addPet(petName, type, sex, breed, dob, ownerusername) {
 		if (!petName) {
@@ -216,6 +270,7 @@ rhit.PetController = class {
 			.then(Response => Response.json())
 			.then(Response => {
 				console.log(Response);
+				this.getPet(username);
 			})
 			.catch((err) => {
 				console.log(err);

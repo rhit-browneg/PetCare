@@ -23,21 +23,74 @@
 
   </nav>
   <div id="accountPage" class="container page-container">
-    <h1 id = username></h1>
-    <p id="Name"></p>
+    <h1 style="text-align: center; font-size: 48px; font-weight: 100;" id = username></h1>
+    <br>
+    <p  id="Name"></p>
     <p id="Address"></p>
     <p id="Phone"></p>
+    <br>
+    <br>
+    <br>
+    <div id =container>
+    <button type="button" data-toggle="modal" data-target="#edit" style = "padding-left:25px;padding-right: 25px;"class="btn">Edit</button>
+    <!-- <button type="button" class="btn">Change Password</button> -->
+    <button data-toggle="modal" data-target="#delete"  type="button" class="btn">Delete</button>
+   
   </div>
+  </div>
+  <div class="modal fade" id="edit" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="Editlabel">Edit</h5>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="inputAccountFName">First Name</label>
+            <input type="text" class="form-control" id="inputAccountFName" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label for="inputAccountLName">Last Name</label>
+            <input type="text" class="form-control" id="inputAccountLName" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label for="inputAccountAddress">Address</label>
+            <input type="text" class="form-control" id="inputAccountAddress" placeholder="Address">
+          </div>
+          <div class="form-group">
+            <label for="inputAccountPhone">Phone Number</label>
+            <input type="text" class="form-control" id="inputAccountPhone" placeholder="Phone Number">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancel" type="button" class="btn" data-dismiss="modal">Cancel</button>
+          <button id="Edit" type="button" class="btn" data-dismiss="modal">Edit</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal fade" id="delete" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="Label">Are you sure you want to delete your account?</h5>
+          </div>
+          <div class="modal-body">
+
+          </div>
+          <div class="modal-footer">
+            <button id="cancel" type="button" class="btn" data-dismiss="modal">Cancel</button>
+            <button id="Delete" type="button" class="btn" data-dismiss="modal">Delete</button>
+          </div>
+        </div>
+      </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>
   <script>
     $("body").bootstrapMaterialDesign();
   </script>
-  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
-  <script src="/__/firebase/init.js"></script>
   <script src="scripts/main.js"></script>
 </body>
 
