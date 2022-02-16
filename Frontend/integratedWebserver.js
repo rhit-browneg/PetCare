@@ -242,6 +242,20 @@ request.addParameter('username',TYPES.NVarChar,user);
 connection.callProcedure(request);
 
 })
+app.post("/api/deletepet", function (req, res) {
+  let name = req.body.petName;
+  let ownerusername = req.body.ownerusername;
+  console.log(name + " " + ownerusername);
+  request = new Request('delete_pet', function (err) {
+    if (err) {
+      console.log(err);
+    }
+
+});
+request.addParameter('petName', TYPES.NVarChar, name);
+request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+connection.callProcedure(request);
+});
 app.put("/api/editPassword/:id", function (req, res) {
   let username = req.params.id;
   let password = req.body.password;

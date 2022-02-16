@@ -102,7 +102,8 @@ h6{
     margin: 0 25px;
     color: white;
 }
-#edit, #delete, #password{
+
+#edit, #delete, #canceldel,#password{
     color:white;
     font-family: 'Oswald';
 }

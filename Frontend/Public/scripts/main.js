@@ -416,6 +416,11 @@ rhit.PetDetailsController = class {
 				this.updatePet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
 	
 			};
+			document.querySelector("#delete").onclick = (event) => {
+				const InputName = document.querySelector("#pName");
+				this.deletePet(InputName.value, user);
+				window.location.href = `/petinfo.html?user=${user}`;
+			};
 			document.querySelector("#clickpets").onclick = (event) => {
 				window.location.href = `/petinfo.html?user=${user}`;
 			};
@@ -434,6 +439,33 @@ rhit.PetDetailsController = class {
 			"ownerusername": ownerusername
 		};
 		let entry = fetch(userUrl + "editpet/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log(Response);
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+
+
+	}
+	deletePet(petName, ownerusername) {
+		if (!petName) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"petName": petName,
+			"ownerusername": ownerusername
+		};
+		let entry = fetch(userUrl + "deletepet/", {
 				method: "POST",
 				headers: {
 					"Content-Type": 'application/json'
