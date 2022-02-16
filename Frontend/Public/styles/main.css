@@ -99,10 +99,10 @@ h6{
 }
 #accountPage button{
     border: .5px solid #0968B5;
-    margin: 0 75px;
+    margin: 0 25px;
     color: white;
 }
-#edit, #delete{
+#edit, #delete, #password{
     color:white;
     font-family: 'Oswald';
 }

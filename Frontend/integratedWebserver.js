@@ -10,6 +10,7 @@ const {
 } = require('express');
 
 
+
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.urlencoded({
   extended: true
@@ -241,6 +242,28 @@ request.addParameter('username',TYPES.NVarChar,user);
 connection.callProcedure(request);
 
 })
+app.put("/api/editPassword/:id", function (req, res) {
+  let username = req.params.id;
+  let password = req.body.password;
+  let salt = createSalt();
+  let hash = hashPassword(password,salt);
+  request = new Request('edit_password', function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+  request.addParameter('username', TYPES.NVarChar, username);
+  request.addParameter('salt', TYPES.VarChar, salt);
+  request.addParameter('hash',TYPES.NVarChar,hash);
+  request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+    let setData = {
+      "user": username
+    }
+    res.send(setData);
+    res.end();
+  });
+  connection.callProcedure(request);
+});
 });
 
 connection.connect();

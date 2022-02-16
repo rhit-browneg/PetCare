@@ -33,7 +33,7 @@
     <br>
     <div id =container>
     <button type="button" data-toggle="modal" data-target="#edit" style = "padding-left:25px;padding-right: 25px;"class="btn">Edit</button>
-    <!-- <button type="button" class="btn">Change Password</button> -->
+    <button data-toggle="modal" data-target="#password"  type="button" class="btn">Change Password</button>
     <button data-toggle="modal" data-target="#delete"  type="button" class="btn">Delete</button>
    
   </div>
@@ -85,6 +85,32 @@
           </div>
         </div>
       </div>
+      </div>
+      <div class="modal fade" id="password" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="Passlabel">Change Password</h5>
+            </div>
+            <div class="modal-body">
+    
+              <div class="form-group">
+                <label for="inputAccountOldPass">Old Password</label>
+                <input type="password" class="form-control" id="inputAccountOldPass" placeholder="Old Password">
+              </div>
+              <div class="form-group">
+                <label for="inputAccountNewPass">New Password</label>
+                <input type="password" class="form-control" id="inputAccountNewPass" placeholder="New Password">
+              </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button id="cancel" type="button" class="btn" data-dismiss="modal">Cancel</button>
+              <button id="Password" type="button" class="btn">Change Password</button>
+            </div>
+          </div>
+        </div>
+        </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>

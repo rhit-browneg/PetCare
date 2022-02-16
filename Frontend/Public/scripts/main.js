@@ -135,6 +135,13 @@ rhit.AccountController = class {
 		document.querySelector("#Delete").onclick = (event) =>{
 			this.delete(username);
 			window.location.href = `/index.html`;
+		};
+        document.querySelector("#Password").onclick = (event) =>{
+			const OldPass = document.querySelector("#inputAccountOldPass");
+			const NewPass = document.querySelector("#inputAccountNewPass");
+			this.checkPass(username,OldPass.value,NewPass.value);
+			OldPass.value = "";
+			NewPass.value = "";
 		}
 		document.querySelector("#clickpets").onclick = (event) => {
 			window.location.href = `/petinfo.html?user=${user}`;
@@ -186,6 +193,62 @@ rhit.AccountController = class {
         .catch(err => {
             console.log(err);
         });  
+	};
+	checkPass(username,oldPass,newPass){
+        if (!username) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"user": username,
+			"pass": oldPass,
+		};
+		let entry = fetch(userUrl + "log/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log("got response");
+				console.log(Response);
+				const isEmpty = Object.keys(Response).length === 0;
+				if (!isEmpty) {
+					if (Response.pwordhash === Response.hash) {
+						this.changePass(username,newPass);
+					} else {
+						document.querySelector("#Passlabel").innerHTML = "Invalid Password, try again";
+					}
+				} else {
+					document.querySelector("#Passlabel").innerHTML = "Invalid Password, try again";
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	changePass(username,password){
+		let d = {
+			"password":password
+		};
+		fetch(userUrl+ "editPassword/" + username, {
+			method: "PUT",
+			headers: {
+				"Content-Type": 'application/json'
+			},
+			body: JSON.stringify(d)
+		})
+		.then(response => response.json())
+		.then(data =>{
+            console.log(data.user);
+			alert("password changed");
+		})
+		.catch(err => {
+			console.log(err);
+		});
+
 	}
 };
 
