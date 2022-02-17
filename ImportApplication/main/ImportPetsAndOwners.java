@@ -1,44 +1,20 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Base64;
-import java.util.Random;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.swing.JOptionPane;
+
 
 public class ImportPetsAndOwners {
 	private Connection connection;
-	private String URL;
-	private static final Random RANDOM = new SecureRandom();
-	private static final Base64.Encoder enc = Base64.getEncoder();
-	private static final Base64.Decoder dec = Base64.getDecoder();
 	
-	public ImportPetsAndOwners(String URL) {
-		this.URL = URL;
-	}
-	
-	public void connect() {
-		try {
-			connection = DriverManager.getConnection(URL);
-			System.out.println("Connected to DB");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public ImportPetsAndOwners(Connection con) {
+		this.connection = con;
 	}
 	
 	public void parseCSV() {
@@ -111,31 +87,4 @@ public class ImportPetsAndOwners {
 		}
 	}
 	
-//	public byte[] getNewSalt() {
-//		byte[] salt = new byte[16];
-//		RANDOM.nextBytes(salt);
-//		return salt;
-//	}
-//	
-//	public String hashPassword(byte[] salt, String password) {
-//
-//		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-//		SecretKeyFactory f;
-//		byte[] hash = null;
-//		try {
-//			f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-//			hash = f.generateSecret(spec).getEncoded();
-//		} catch (NoSuchAlgorithmException e) {
-//			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-//			e.printStackTrace();
-//		} catch (InvalidKeySpecException e) {
-//			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-//			e.printStackTrace();
-//		}
-//		return getStringFromBytes(hash);
-//	}
-//	
-//	public String getStringFromBytes(byte[] data) {
-//		return enc.encodeToString(data);
-//	}
 }

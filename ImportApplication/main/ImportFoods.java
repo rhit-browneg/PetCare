@@ -10,10 +10,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Base64;
 import java.util.Random;
-public class ImportNeeds {
+public class ImportFoods {
 	private Connection connection;
 	
-	public ImportNeeds(Connection con) {
+	public ImportFoods(Connection con) {
 		this.connection = con;
 	}
 
@@ -25,12 +25,12 @@ public class ImportNeeds {
 		//parsing a CSV file into BufferedReader class constructor  
 		int x = 0;
 		String currentPath = new java.io.File(".").getCanonicalPath();
-		BufferedReader br = new BufferedReader(new FileReader(currentPath + "\\main\\foods.csv"));  
+		BufferedReader br = new BufferedReader(new FileReader(currentPath + "\\main\\needs.csv"));  
 		while ((line = br.readLine()) != null)   //returns a Boolean value  
 		{  
 		String[] info = line.split(splitBy);    // use comma as separator  
 		if (x > 0) {
-			addFood(info[2],info[1], info[0]);
+			addExercise(info[1],info[2], info[3], info[0]);
 		}
 		x++;
 		}  
@@ -41,21 +41,24 @@ public class ImportNeeds {
 		}  
 	}
 
-	private void addFood(String price, String food, String species) {
+	private void addExercise(String type, String description, String frequency, String species) {
 		CallableStatement stmt;
 		try {
-			stmt = connection.prepareCall("{? = call add_food_for_species(?,?,?)}");
-			stmt.setString(2,price);
-			stmt.setString(3, food);
-			stmt.setString(4, species);
+			stmt = connection.prepareCall("{? = call add_exercise_for_species(?,?,?,?)}");
+			stmt.setString(2,type );
+			if (description.isBlank()) stmt.setString(3, null);
+			else stmt.setString(3, description);
+			
+			stmt.setString(4, frequency);
+			stmt.setString(5, species);
 			stmt.registerOutParameter(1, Types.INTEGER);
 			stmt.execute();
 			int returnValue = stmt.getInt(1);
 			if (returnValue != 0) {
-				System.out.println("failed to add food");
+				System.out.println("failed to add exercise");
 			}
 		} catch (SQLException e) {
-			System.out.println("failed to add food");
+			System.out.println("failed to add exercise");
 			e.printStackTrace();
 		}
 		

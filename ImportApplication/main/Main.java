@@ -24,15 +24,11 @@ public class Main {
 				.replace("${dbName}", databaseName)
 				.replace("${user}", username)
 				.replace("${pass}", password);
-//		ImportVets IV = new ImportVets(finalUrl);
-//		IV.connect();
-//		IV.parseCSV();
-		ImportPetsAndOwners PO = new ImportPetsAndOwners(finalUrl);
-		PO.connect();
-		PO.parseCSV();
-//		ImportNeeds NE = new ImportNeeds(finalUrl);
-//		NE.connect();
-//		NE.parseCSV();
+
+		DBConnection connection = new DBConnection(finalUrl);
+		connection.connect();
+		connection.populate();
+
 
 	}
 }
