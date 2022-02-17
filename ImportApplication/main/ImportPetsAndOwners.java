@@ -1,6 +1,7 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -47,13 +48,14 @@ public class ImportPetsAndOwners {
 		{  
 		//parsing a CSV file into BufferedReader class constructor  
 		int x = 0;
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\browneg\\OneDrive - Rose-Hulman Institute of Technology\\Desktop\\ownerdata.csv"));  
+		String currentPath = new java.io.File(".").getCanonicalPath();
+		BufferedReader br = new BufferedReader(new FileReader(currentPath + "\\main\\ownerdata.csv"));  
 		while ((line = br.readLine()) != null)   //returns a Boolean value  
 		{  
 		String[] info = line.split(splitBy);    // use comma as separator  
 		if (x > 0) {
-			Register(info[0], info[1], info[2], info[3]);
-			addPet(info[4], info[5], info[6], info[7], info[8], info[9], info[0]);
+			Register(info[9], info[10], info[0], info[1], info[2], info[3]);
+			addPet(info[4], info[5], info[6], info[7], info[8], info[0]);
 		}
 		x++;
 		}  
@@ -65,16 +67,15 @@ public class ImportPetsAndOwners {
 	}
 	
 	public void addPet (String name, String type, String sex, String breed,
-		String dob, String cName, String username) {
+		String dob, String username) {
 		try {
-			CallableStatement stmt = connection.prepareCall("{? = call add_pet(?,?,?,?,?,?,?)}");
+			CallableStatement stmt = connection.prepareCall("{? = call add_pet(?,?,?,?,?,?)}");
 			stmt.setString(2, name);
 			stmt.setString(3, type);
 			stmt.setString(4, sex);
 			stmt.setString(5, breed);
 			stmt.setString(6, dob);
-			stmt.setString(7, cName);
-			stmt.setString(8, username);
+			stmt.setString(7, username);
 			stmt.registerOutParameter(1, Types.INTEGER);
 			stmt.execute();
 			int returnValue = stmt.getInt(1);
@@ -87,13 +88,11 @@ public class ImportPetsAndOwners {
 			e.printStackTrace();
 		}
 	}
-	public void Register (String fname, String lname, String address, String num) {
-		byte[] salt = getNewSalt();
-		String hash = hashPassword(salt,fname);
+	public void Register (String salt, String hash, String fname, String lname, String address, String num) {
 		try {
 			CallableStatement stmt = connection.prepareCall("{? = call register(?,?,?,?,?,?,?)}");
 			stmt.setString(2, fname);
-			stmt.setBytes(3, salt);
+			stmt.setString(3, salt);
 			stmt.setString(4, hash);
 			stmt.setString(5, fname);
 			stmt.setString(6, lname);
@@ -112,31 +111,31 @@ public class ImportPetsAndOwners {
 		}
 	}
 	
-	public byte[] getNewSalt() {
-		byte[] salt = new byte[16];
-		RANDOM.nextBytes(salt);
-		return salt;
-	}
-	
-	public String hashPassword(byte[] salt, String password) {
-
-		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-		SecretKeyFactory f;
-		byte[] hash = null;
-		try {
-			f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-			hash = f.generateSecret(spec).getEncoded();
-		} catch (NoSuchAlgorithmException e) {
-			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
-			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-			e.printStackTrace();
-		}
-		return getStringFromBytes(hash);
-	}
-	
-	public String getStringFromBytes(byte[] data) {
-		return enc.encodeToString(data);
-	}
+//	public byte[] getNewSalt() {
+//		byte[] salt = new byte[16];
+//		RANDOM.nextBytes(salt);
+//		return salt;
+//	}
+//	
+//	public String hashPassword(byte[] salt, String password) {
+//
+//		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+//		SecretKeyFactory f;
+//		byte[] hash = null;
+//		try {
+//			f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+//			hash = f.generateSecret(spec).getEncoded();
+//		} catch (NoSuchAlgorithmException e) {
+//			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
+//			e.printStackTrace();
+//		} catch (InvalidKeySpecException e) {
+//			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
+//			e.printStackTrace();
+//		}
+//		return getStringFromBytes(hash);
+//	}
+//	
+//	public String getStringFromBytes(byte[] data) {
+//		return enc.encodeToString(data);
+//	}
 }

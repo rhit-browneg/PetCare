@@ -146,6 +146,9 @@ rhit.AccountController = class {
 		document.querySelector("#clickpets").onclick = (event) => {
 			window.location.href = `/petinfo.html?user=${user}`;
 		};
+		document.querySelector("#logout").onclick = (event) => {
+			window.location.href = `/index.html`;
+		};
 	}
 	getUser(username){
 		let entry = fetch(userUrl + "user/" + username)

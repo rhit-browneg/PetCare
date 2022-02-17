@@ -30,9 +30,9 @@ public class Main {
 		ImportPetsAndOwners PO = new ImportPetsAndOwners(finalUrl);
 		PO.connect();
 		PO.parseCSV();
-		ImportNeeds NE = new ImportNeeds(finalUrl);
-		NE.connect();
-		NE.parseCSV();
+//		ImportNeeds NE = new ImportNeeds(finalUrl);
+//		NE.connect();
+//		NE.parseCSV();
 
 	}
 }
