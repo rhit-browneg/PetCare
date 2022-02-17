@@ -10,7 +10,7 @@ let config = {
   options: {
       // If you are on Microsoft Azure, you need encryption:
       encrypt: true,
-      database: 'PetCare'  //update me
+      database: 'PetCareFinalDemo'  //update me
   }
 }; 
   
