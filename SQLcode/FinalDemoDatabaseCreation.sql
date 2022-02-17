@@ -70,7 +70,7 @@ GO
 CREATE TABLE Exercise(
 ID int IDENTITY(1,1) NOT NULL PRIMARY KEY,
 [Type] varchar(25) NOT NULL,
-[Description] text NOT NULL)
+[Description] text)
 GO
 --Create Needs table
 CREATE TABLE Needs(
