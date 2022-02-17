@@ -44,7 +44,7 @@ connection.on('connect', function (err) {
     request.addParameter('PasswordHash', TYPES.VarChar, hash);
     request.addParameter('fname', TYPES.VarChar, fName);
     request.addParameter('lname', TYPES.VarChar, lName);
-    request.addParameter('address', TYPES.VarChar, address);
+    request.addParameter('address', TYPES.NVarChar, address);
     request.addParameter('number', TYPES.VarChar, phone);
     if ( user != null && fName != null && lName != null && address != null) {
       json[0] = "success";
