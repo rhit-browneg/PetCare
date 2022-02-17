@@ -45,8 +45,8 @@ connection.on('connect', function (err) {
     request.addParameter('fname', TYPES.VarChar, fName);
     request.addParameter('lname', TYPES.VarChar, lName);
     request.addParameter('address', TYPES.VarChar, address);
-    request.addParameter('number', TYPES.Int, phone);
-    if (phone === TYPES.Int && user != null && fName != null && lName != null && address != null) {
+    request.addParameter('number', TYPES.VarChar, phone);
+    if ( user != null && fName != null && lName != null && address != null) {
       json[0] = "success";
     }
     res.send(json);
@@ -96,12 +96,12 @@ connection.on('connect', function (err) {
       }
 
     });
-    request.addParameter('petName', TYPES.NVarChar, name);
+    request.addParameter('petName', TYPES.VarChar, name);
     request.addParameter('type', TYPES.VarChar, type);
-    request.addParameter('sex', TYPES.VarChar, sex);
-    request.addParameter('breed', TYPES.VarChar, breed);
+    request.addParameter('sex', TYPES.NVarChar, sex);
+    request.addParameter('breed', TYPES.NVarChar, breed);
     request.addParameter('dob', TYPES.Date, dob);
-    request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+    request.addParameter('ownerusernme', TYPES.NVarChar, ownerusername);
     request.on('doneProc', function (rowCount, more, returnStatus, rows) {
       res.send(data);
       res.end;
@@ -198,12 +198,12 @@ connection.on('connect', function (err) {
       }
 
   });
-  request.addParameter('name', TYPES.NVarChar, name);
+  request.addParameter('name', TYPES.VarChar, name);
   request.addParameter('type', TYPES.VarChar, type);
-  request.addParameter('sex', TYPES.VarChar, sex);
-  request.addParameter('breed', TYPES.VarChar, breed);
+  request.addParameter('sex', TYPES.NVarChar, sex);
+  request.addParameter('breed', TYPES.NVarChar, breed);
   request.addParameter('dob', TYPES.Date, dob);
-  request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+  request.addParameter('ownerusernme', TYPES.NVarChar, ownerusername);
 connection.callProcedure(request);
 });
 app.put("/api/editUser/:id", function (req, res) {
@@ -252,8 +252,8 @@ app.post("/api/deletepet", function (req, res) {
     }
 
 });
-request.addParameter('petName', TYPES.NVarChar, name);
-request.addParameter('ownerusernme', TYPES.VarChar, ownerusername);
+request.addParameter('petName', TYPES.VarChar, name);
+request.addParameter('ownerusernme', TYPES.NVarChar, ownerusername);
 connection.callProcedure(request);
 });
 app.put("/api/editPassword/:id", function (req, res) {
