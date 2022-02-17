@@ -414,6 +414,7 @@ rhit.PetDetailsController = class {
 				const InputSpecies = document.querySelector("#species");
 				console.log(InputName.value);
 				this.updatePet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
+				window.location.href = `/petinfo.html?user=${user}`;
 	
 			};
 			document.querySelector("#delete").onclick = (event) => {
@@ -423,6 +424,16 @@ rhit.PetDetailsController = class {
 			};
 			document.querySelector("#clickpets").onclick = (event) => {
 				window.location.href = `/petinfo.html?user=${user}`;
+			};
+			document.querySelector("#showNeeds").onclick = (event) => {
+				document.querySelector("#showNeeds").hidden = true;
+				const InputName = document.querySelector("#pName");
+				this.getNeeds(InputName.value, user);
+			};
+			document.querySelector("#showExercise").onclick = (event) => {
+				document.querySelector("#showExercise").hidden = true;
+				const InputName = document.querySelector("#pName");
+				this.getExercise(InputName.value, user);
 			};
 	}
 	updatePet(petName, type, sex, breed, dob, ownerusername) {
@@ -482,6 +493,104 @@ rhit.PetDetailsController = class {
 			});
 
 
+	}
+	getNeeds(petName, ownerusername) {
+		if (!petName) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"petName": petName,
+			"ownerusername": ownerusername
+		};
+		const newList = htmlToElement('<div id = "petneedsContainer"></div>');
+		let entry = fetch(userUrl + "getNeeds/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log(Response);
+				let foods = `<div id = "petfoodcard" class="card petcards" style="width: 25rem;">
+							<div class="card-body"> <h6 class="card-title text-center">Foods</h6>`;
+				for (let x = 0; x < Response.length; x++) {
+					foods = foods + `<h6>Food: ${Response[x].Food}`;
+					if (Response[x].Price) {
+						foods = foods + `, Price: $${Response[x].Price} </h6>`;
+					}
+					else{
+						foods = foods + `</h6>`;
+					}
+				}
+				foods = foods + `</div></div>`;
+				newList.append(htmlToElement(foods));
+				//Remove the old quoteListContainer
+				const oldList = document.querySelector("#petneedsContainer");
+				oldList.removeAttribute("id");
+				oldList.hidden = true;
+				//Put in the new quoteListContauner
+				oldList.parentElement.appendChild(newList);
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+	}
+	getExercise(petName, ownerusername) {
+		if (!petName) {
+			console.log("No user provided.  Ignoring request.");
+			return;
+		}
+		let data = {
+			"petName": petName,
+			"ownerusername": ownerusername
+		};
+		const newList = htmlToElement('<div id = "petexerciseContainer"></div>');
+		let entry = fetch(userUrl + "getexercise/", {
+				method: "POST",
+				headers: {
+					"Content-Type": 'application/json'
+				},
+				body: JSON.stringify(data)
+			})
+			.then(Response => Response.json())
+			.then(Response => {
+				console.log(Response);
+				let exercise = `<div id = "petexercisecard" class="card petcards" style="width: 25rem;">
+							<div class="card-body"> <h6 class="card-title text-center">Exercise</h6>`;
+				for (let x = 0; x < Response.length; x++) {
+					exercise = exercise + `<h6>Exercise: ${Response[x].Type}`;
+					if (Response[x].Description) {
+						exercise = exercise + `, ${Response[x].Description}`;
+					}
+					exercise = exercise + `, Frequency: ${Response[x].Frequency}</h6>`;
+					
+				}
+				exercise = exercise + `</div></div>`;
+				newList.append(htmlToElement(exercise));
+				//Remove the old quoteListContainer
+				const oldList = document.querySelector("#petexerciseContainer");
+				oldList.removeAttribute("id");
+				oldList.hidden = true;
+				//Put in the new quoteListContauner
+				oldList.parentElement.appendChild(newList);
+			})
+			.catch((err) => {
+				console.log(err);
+
+			});
+	}
+	createFoodSection(food, price) {
+		return htmlToElement(
+			`<div id = "petfoodcard" class="card petcards" style="width: 25rem;">
+			<div class="card-body">
+				<h6>Food: ${food}, Price: ${price} </h6>
+			</div>
+		  </div>
+		*/`);
 	}
 };
 

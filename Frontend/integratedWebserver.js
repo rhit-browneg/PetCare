@@ -278,6 +278,62 @@ app.put("/api/editPassword/:id", function (req, res) {
   });
   connection.callProcedure(request);
 });
+app.post("/api/getneeds", function (req, res) {
+  let name = req.body.petName;
+  let ownerusername = req.body.ownerusername;
+  console.log(name + " " + ownerusername);
+  request = new Request('get_pet_needs', function (err) {
+    if (err) {
+      console.log(err);
+    }
+
+});
+
+request.addParameter('username', TYPES.NVarChar, ownerusername);
+request.addParameter('name', TYPES.VarChar, name);
+jsonArray = [];
+request.on('row', (columns) => {
+  var pet = {};
+  columns.forEach(function (column) {
+    pet[column.metadata.colName] = column.value;
+  });
+  jsonArray.push(pet)
+});
+request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+  console.log(jsonArray);
+  res.send(jsonArray);
+  res.end();
+});
+connection.callProcedure(request);
+});
+app.post("/api/getexercise", function (req, res) {
+  let name = req.body.petName;
+  let ownerusername = req.body.ownerusername;
+  console.log(name + " " + ownerusername);
+  request = new Request('get_pet_exercise', function (err) {
+    if (err) {
+      console.log(err);
+    }
+
+});
+
+request.addParameter('username', TYPES.NVarChar, ownerusername);
+request.addParameter('name', TYPES.VarChar, name);
+jsonArray = [];
+request.on('row', (columns) => {
+  var pet = {};
+  columns.forEach(function (column) {
+    pet[column.metadata.colName] = column.value;
+  });
+  jsonArray.push(pet)
+});
+request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+  console.log(jsonArray);
+  res.send(jsonArray);
+  res.end();
+});
+connection.callProcedure(request);
+});
 });
 
 connection.connect();

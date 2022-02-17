@@ -75,7 +75,7 @@ body {
     color: black;
 }
 
-#addpetbtn {
+#addpetbtn, #showNeeds, #showExercise {
     background-color: white;
     color: black;
     margin-bottom: 20px;
