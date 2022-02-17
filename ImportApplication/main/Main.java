@@ -7,18 +7,13 @@ import java.sql.SQLException;
 
 public class Main {
 	
-	private String databaseName = "PetCare";
-	private String serverName = "titan.csse.rose-hulman.edu";
-	private String username = "PetCareAdmin";
-	private String password = "DogCatFish";
-	
 	public static void main(String[] args) {
 		String SampleURL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};"
 				+ "password={${pass}}";
 		String databaseName = "PetCare";
 		String serverName = "titan.csse.rose-hulman.edu";
-		String username = "browneg";
-		String password = "Crachiolo1@";
+		String username = "";
+		String password = "";
 		String finalUrl = SampleURL
 				.replace("${dbServer}", serverName)
 				.replace("${dbName}", databaseName)
