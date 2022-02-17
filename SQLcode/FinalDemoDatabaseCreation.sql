@@ -490,6 +490,9 @@ SELECT *
 FROM PetOwner
 WHERE username = @username
 RETURN (0)
+GO
+GRANT EXECUTE ON get_user_info TO PetCareAdmin
+GO
 --Create Procedure register
 CREATE PROCEDURE [dbo].[register]
 (
@@ -554,3 +557,91 @@ values(@fname, @lname, @number, @address, @Username)
 RETURN (0)
 GO
 GRANT EXECUTE ON register TO PetCareAdmin
+GO
+CREATE PROC [dbo].[add_exercise_for_species]
+(@Type varchar(25),
+@Description text,
+@Frequency varchar(50),
+@speciesname varchar(30))
+AS
+DECLARE @speciesID AS int
+DECLARE @exerciseID AS int
+IF(@Type is null or @Type = '') 
+BEGIN
+	Print 'Type name cannot be null or empty.';
+	RETURN (1)
+END 
+IF @Frequency is null 
+BEGIN
+	Print 'Frequency cannot be null or empty.';
+	RETURN (2)
+END 
+IF @speciesname is null 
+BEGIN
+	Print 'Species cannot be null or empty.';
+	RETURN (3)
+END 
+
+SELECT @speciesID = Species.ID
+FROM Species
+WHERE Species.Type = @speciesname
+
+IF (@speciesID is null) 
+BEGIN
+	Print 'Species does not exist.';
+	RETURN (4)
+END
+
+INSERT INTO Exercise(Type,Description) 
+Values (@Type,@Description)
+
+SELECT @exerciseID = @@IDENTITY
+
+INSERT INTO Needs (ExerciseID, SpeciesID, Frequency)
+values (@exerciseID, @speciesID, @Frequency)
+GO
+GRANT EXECUTE ON [add_exercise_for_species] TO PetCareAdmin
+
+GO
+CREATE PROC [dbo].[add_food_for_species]
+(@price money,
+@name varchar(25),
+@speciesname varchar(30))
+AS
+DECLARE @speciesID AS int
+DECLARE @foodID AS int
+IF(@Price is null or @Price = '') 
+BEGIN
+	Print 'Price cannot be null or empty.';
+	RETURN (1)
+END 
+IF @name is null 
+BEGIN
+	Print 'Frequency cannot be null or empty.';
+	RETURN (2)
+END 
+IF @speciesname is null 
+BEGIN
+	Print 'Species cannot be null or empty.';
+	RETURN (3)
+END 
+
+SELECT @speciesID = Species.ID
+FROM Species
+WHERE Species.Type = @speciesname
+
+IF (@speciesID is null) 
+BEGIN
+	Print 'Species does not exist.';
+	RETURN (4)
+END
+
+INSERT INTO Food(Price,[Name]) 
+Values (@price,@name)
+
+SELECT @foodID = @@IDENTITY
+
+INSERT INTO Good_For(FoodID, SpeciesID)
+values (@foodID, @speciesID)
+GO
+GRANT EXECUTE ON [add_food_for_species] TO PetCareAdmin
