@@ -39,13 +39,6 @@ ON UPDATE CASCADE
 ON DELETE CASCADE,
 )
 GO 
---Create Vet table
-CREATE TABLE Vet(
-ID int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-[Name] varchar(25) NOT NULL,
-[PhoneNumber] int NOT NULL,
-[Address] varchar(50) NOT NULL)
-GO
 --Create Species table
 CREATE TABLE Species(
 ID int IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -57,7 +50,6 @@ ID int IDENTITY (1,1) NOT NULL PRIMARY KEY,
 DOB date NOT NULL,
 [Name] varchar(25) NOT NULL,
 SpeciesPart_of int NOT NULL,
-VetID int NOT NULL,
 ownerusername nvarchar(50) NOT NULL,
 breed nvarchar(50) NOT NULL,
 gender nvarchar(50) NOT NULL,
@@ -65,8 +57,6 @@ Age AS (datediff(year,[DOB],getdate())),
 FOREIGN KEY (ownerusername) REFERENCES [User](username)
 ON UPDATE CASCADE
 ON DELETE CASCADE,
-FOREIGN KEY (VetID) REFERENCES Vet(ID)
-ON UPDATE CASCADE,
 FOREIGN KEY (SpeciesPart_of) REFERENCES Species(ID)
 ON UPDATE CASCADE)
 GO
@@ -109,16 +99,15 @@ GO
 CREATE PROCEDURE [dbo].[add_pet] 
 (
 @petName varchar(25),
-@type varchar(25),
-@sex varchar(25),
-@breed varchar(25),
-@dob datetime,
-@clinicName varchar(25),
-@ownerusernme varchar(25)
+@type varchar(30),
+@sex nvarchar(50),
+@breed nvarchar(50),
+@dob date,
+@ownerusernme nvarchar(50)
 )
 AS
 DECLARE @speciesID AS int
-DECLARE @vetID AS int
+
 
 if @petName is null or @petName = '' 
 BEGIN
@@ -150,26 +139,12 @@ BEGIN
 	RETURN (5)
 END 
 
-if @clinicName is null or @clinicName = '' 
-BEGIN
-	Print 'Clinic name cannot be null or empty.';
-	RETURN (6)
-END 
-
 if @ownerusernme is null or @ownerusernme = '' 
 BEGIN
 	Print 'Owner cannot be null or empty.';
 	RETURN (7)
 END 
-
-SELECT @vetID = ID FROM Vet WHERE Name = @clinicName
 SELECT @speciesID = ID FROM Species WHERE Type = @type
-
-IF (@vetID) IS NULL
-BEGIN
-	PRINT 'Vet does not exist'
-	RETURN 8
-END
 
 
 IF (@speciesID) IS NULL
@@ -188,48 +163,13 @@ BEGIN
 END
 
 INSERT INTO Pet
-(DOB, Name, SpeciesPart_of, VetID, ownerusername, breed, gender)
-values (@dob, @petName, @speciesID, @vetID, @ownerusernme, @breed, @sex)
+(DOB, Name, SpeciesPart_of, ownerusername, breed, gender)
+values (@dob, @petName, @speciesID, @ownerusernme, @breed, @sex)
+RETURN 0
 GO
 GRANT EXECUTE ON add_pet TO PetCareAdmin
 GO 
---Create Procedure add_vet
-CREATE PROCEDURE [dbo].[add_vet] (
-@name varchar(25),
-@phone [int],
-@addr varchar(50)
-)
-AS
-if @name is null or @name = '' 
-BEGIN
-	Print 'Vet name cannot be null or empty.';
-	RETURN (1)
-END 
-
-if @phone is null or @phone = '' 
-BEGIN
-	Print 'Phone number cannot be null or empty.';
-	RETURN (2)
-END 
-
-if @addr is null or @addr = '' 
-BEGIN
-	Print 'Address cannot be null or empty.';
-	RETURN (3)
-END 
-
-IF (SELECT Count(Name) from Vet WHERE Name = @name) != 0
-BEGIN
-	PRINT 'The vet ' + @name + ' already exists.'
-	RETURN 4
-END
-INSERT INTO Vet
-(Name, PhoneNumber, Address)
-Values(@name, @phone, @addr)
-GO
-GRANT EXECUTE ON add_vet TO PetCareAdmin
-GO
---Create Procedure check_passwords
+--Create Procedure check password
 CREATE PROCEDURE [dbo].[check_passwords]
 (
 @username nvarchar(50)
@@ -244,31 +184,21 @@ END
 SELECT pwordsalt, pwordhash
 FROM [User]
 WHERE username = @username
+RETURN 0
 GO
 GRANT EXECUTE ON check_passwords TO PetCareAdmin
 GO
 --Create Proc delete_pet
 CREATE PROC [dbo].[delete_pet]
 @petName varchar(25),
-@dob datetime,
-@ownerusernme varchar(25)
-
+@ownerusernme nvarchar(50)
 AS
-
 DECLARE @petID AS int
-
 if @petName is null or @petName = '' 
 BEGIN
 	Print 'Pet name cannot be null or empty.';
 	RETURN (1)
 END 
-
-if @dob is null or @dob = '' 
-BEGIN
-	Print 'DOB cannot be null or empty.';
-	RETURN (5)
-END 
-
 if @ownerusernme is null or @ownerusernme = '' 
 BEGIN
 	Print 'Owner cannot be null or empty.';
@@ -277,7 +207,7 @@ END
 
 SELECT @petID = ID 
 FROM Pet 
-WHERE Name = @petName AND DOB = @dob AND ownerusername = @ownerusernme
+WHERE Name = @petName AND ownerusername = @ownerusernme
 
 IF (@petID) IS NULL
 BEGIN
@@ -286,26 +216,63 @@ BEGIN
 END
 
 DELETE FROM Pet WHERE ID = @petID;
+RETURN 0
 GO
 GRANT EXECUTE ON delete_pet TO PetCareAdmin
 GO
---Create procedure edit_pet
+--Create Procedure delete_user
+CREATE PROCEDURE [dbo].[delete_user]
+(
+@username nvarchar(50)
+)
+AS
+IF @username is null or @username = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+DELETE FROM [User] WHERE username = @username
+RETURN 0
+GO 
+GRANT EXECUTE ON delete_user TO PetCareAdmin
+GO 
+CREATE PROCEDURE [dbo].[edit_password]
+(
+@username nvarchar(50),
+@salt varchar(50),
+@hash varchar(50)
+)
+AS
+IF @username is null or @username = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+IF @hash is null or @hash = '' 
+BEGIN
+	Print 'Password cannot be null or empty.';
+	RETURN (1)
+END 
+UPDATE [User] SET pwordsalt=@salt,pwordhash=@hash WHERE username= @username
+RETURN (0)
+GO
+GRANT EXECUTE ON edit_password TO PetCareAdmin
+GO
+--Create Procedure edit_pet
 CREATE PROCEDURE [dbo].[edit_pet] 
 (
-@petName varchar(25),
-@type varchar(25),
-@sex varchar(25),
-@breed varchar(25),
-@dob datetime,
-@clinicName varchar(25),
-@ownerusernme varchar(25),
-@petID int
+@name varchar(25),
+@type varchar(30),
+@sex nvarchar(50),
+@breed nvarchar(50),
+@dob date,
+@ownerusernme nvarchar(50)
 )
 AS
 DECLARE @speciesID AS int
-DECLARE @vetID AS int
+DECLARE @petID AS int
 
-if @petName is null or @petName = '' 
+if @name is null or @name = '' 
 BEGIN
 	Print 'Pet name cannot be null or empty.';
 	RETURN (1)
@@ -335,11 +302,6 @@ BEGIN
 	RETURN (5)
 END 
 
-if @clinicName is null or @clinicName = '' 
-BEGIN
-	Print 'Clinic name cannot be null or empty.';
-	RETURN (6)
-END 
 
 if @ownerusernme is null or @ownerusernme = '' 
 BEGIN
@@ -347,14 +309,9 @@ BEGIN
 	RETURN (7)
 END 
 
-SELECT @vetID = ID FROM Vet WHERE Name = @clinicName
 SELECT @speciesID = ID FROM Species WHERE Type = @type
+SELECT @petID = ID FROM Pet WHERE ownerusername = @ownerusernme AND [Name] = @name
 
-IF (@vetID) IS NULL
-BEGIN
-	PRINT 'Vet does not exist'
-	RETURN 8
-END
 IF (SELECT count(Username) FROM PetOwner WHERE Username = @ownerusernme) = 0
 BEGIN
 	PRINT 'User does not exist'
@@ -373,16 +330,82 @@ BEGIN
 	values(@type)
 	SELECT @speciesID = @@IDENTITY
 END
-
-
-
 UPDATE Pet 
-SET DOB = @dob, Name = @petName, SpeciesPart_of = @speciesID, VetID = @vetID, breed = @breed, gender=@sex
+SET DOB = @dob, Name = @name, SpeciesPart_of = @speciesID, breed = @breed, gender=@sex
 WHERE ownerusername = @ownerusernme AND ID = @petID
+RETURN (0)
 GO
 GRANT EXECUTE ON edit_pet TO PetCareAdmin
 GO
---Create procedure get_pet_info
+--Create Procedure edit_user
+CREATE PROCEDURE [dbo].[edit_user]
+(
+@currentUsername nvarchar(50),
+@FName varchar(25),
+@LName varchar(25),
+@Address nvarchar(50),
+@PhoneNumber varchar(12)
+)
+AS
+IF @currentUsername is null or @currentUsername = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+IF @FName is null or @FName = '' 
+BEGIN
+	SET @FName = (SELECT FName FROM PetOwner WHERE Username = @currentUsername);
+END 
+IF @LName is null or @LName = '' 
+BEGIN
+	SET @LName = (SELECT LName FROM PetOwner WHERE Username = @currentUsername);
+END 
+IF @Address is null or @Address = '' 
+BEGIN
+	SET @Address = (SELECT [Address] FROM PetOwner WHERE Username = @currentUsername);
+END 
+IF @PhoneNumber is null or @PhoneNumber = '' 
+BEGIN
+	SET @PhoneNumber = (SELECT PhoneNumber FROM PetOwner WHERE Username = @currentUsername);
+END 
+UPDATE PetOwner SET FName = @FName, LName = @LName, [Address] = @Address, PhoneNumber = @PhoneNumber WHERE Username = @Currentusername
+RETURN (0)
+GO
+GRANT EXECUTE ON edit_user TO PetCareAdmin
+GO
+--Create procedure get_pet_exercise
+CREATE PROCEDURE [dbo].[get_pet_exercise]
+(
+@username nvarchar(50),
+@name varchar(25)
+)
+AS
+DECLARE @speciesID AS int
+IF @username is null or @username = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+IF @name is null or @name = '' 
+BEGIN
+	Print 'Pet name cannot be null or empty.';
+	RETURN (1)
+END 
+SELECT @speciesID = Species.ID 
+FROM Species
+JOIN Pet ON Pet.SpeciesPart_of = Species.ID
+WHERE ownerusername = @username AND Pet.[Name] = @name
+
+SELECT Exercise.Type, Exercise.Description, Needs.Frequency
+FROM Species
+JOIN Needs ON Needs.SpeciesID = Species.ID
+JOIN Exercise ON Exercise.ID = Needs.ExerciseID
+WHERE Species.ID = @speciesID
+RETURN (0)
+GO 
+GRANT EXECUTE ON get_pet_exercise TO PetCareAdmin
+GO
+--Create Procedure get_pet_info
 CREATE PROCEDURE [dbo].[get_pet_info]
 (
 @username nvarchar(50)
@@ -393,14 +416,65 @@ BEGIN
 	Print 'Username cannot be null or empty.';
 	RETURN (1)
 END 
-SELECT Pet.Name, DOB, breed, gender, Species.Type AS 'Species', Vet.Name AS 'Vet Clinic'
+SELECT Pet.Name, Age, breed, gender, Species.Type AS 'Species'
 FROM Pet
 JOIN Species ON Species.ID = Pet.SpeciesPart_of
-JOIN Vet ON Vet.ID = Pet.VetID
 WHERE ownerusername = @username
+RETURN (0)
 GO
 GRANT EXECUTE ON get_pet_info TO PetCareAdmin
+GO 
+-- Create Procedure get_pet_info_dob
+CREATE PROCEDURE [dbo].[get_pet_info_dob]
+(
+@username nvarchar(50)
+)
+AS
+IF @username is null or @username = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+SELECT Pet.Name, DOB, breed, gender, Species.Type AS 'Species'
+FROM Pet
+JOIN Species ON Species.ID = Pet.SpeciesPart_of
+WHERE ownerusername = @username
+RETURN (0)
 GO
+GRANT EXECUTE ON get_pet_info_dob TO PetCareAdmin
+GO 
+--Create Procedure get_pet_needs
+CREATE PROCEDURE [dbo].[get_pet_needs]
+(
+@username nvarchar(50),
+@name varchar(25)
+)
+AS
+DECLARE @speciesID AS int
+IF @username is null or @username = '' 
+BEGIN
+	Print 'Username cannot be null or empty.';
+	RETURN (1)
+END 
+IF @name is null or @name = '' 
+BEGIN
+	Print 'Pet name cannot be null or empty.';
+	RETURN (1)
+END 
+SELECT @speciesID = Species.ID 
+FROM Species
+JOIN Pet ON Pet.SpeciesPart_of = Species.ID
+WHERE ownerusername = @username AND Pet.[Name] = @name
+
+SELECT Food.[Name] AS 'Food', Food.Price
+FROM Species
+JOIN Good_For ON Good_For.SpeciesID = Species.ID
+JOIN Food ON Food.ID = Good_For.FoodID
+WHERE Species.ID = @speciesID
+RETURN (0)
+GO
+GRANT EXECUTE ON get_pet_needs TO PetCareAdmin
+GO 
 --Create Procedure get_user_info
 CREATE PROCEDURE [dbo].[get_user_info]
 (
@@ -415,19 +489,17 @@ END
 SELECT *
 FROM PetOwner
 WHERE username = @username
-GO
-GRANT EXECUTE ON get_user_info TO PetCareAdmin
-GO
---Create Procdure register
+RETURN (0)
+--Create Procedure register
 CREATE PROCEDURE [dbo].[register]
 (
 @Username nvarchar(50),
 @PasswordSalt varchar(50),
 @PasswordHash varchar(50),
-@fname varchar(50),
-@lname varchar(50),
-@address varchar(50),
-@number int
+@fname varchar(25),
+@lname varchar(25),
+@address nvarchar(50),
+@number varchar(12)
 )
 AS
 if @Username is null or @Username = '' 
@@ -479,5 +551,6 @@ values(@Username, @PasswordSalt, @PasswordHash)
 INSERT INTO [PetOwner]
 (FName, LName, PhoneNumber, Address, Username)
 values(@fname, @lname, @number, @address, @Username)
+RETURN (0)
 GO
 GRANT EXECUTE ON register TO PetCareAdmin
