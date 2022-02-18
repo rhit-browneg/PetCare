@@ -33,7 +33,7 @@ public class DBConnection {
 		PO.parseCSV();
 		ImportNeeds NE = new ImportNeeds(this.connection);
 		NE.parseCSV();
-		ImportFoods foods = new ImportFoods(this.connection);
+		ImportExercise foods = new ImportExercise(this.connection);
 		foods.parseCSV();
 		try {
 			connection.close();

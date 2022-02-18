@@ -10,10 +10,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Base64;
 import java.util.Random;
-public class ImportFoods {
+public class ImportExercise {
 	private Connection connection;
 	
-	public ImportFoods(Connection con) {
+	public ImportExercise(Connection con) {
 		this.connection = con;
 	}
 
