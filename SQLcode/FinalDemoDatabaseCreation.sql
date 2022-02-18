@@ -53,7 +53,7 @@ SpeciesPart_of int NOT NULL,
 ownerusername nvarchar(50) NOT NULL,
 breed nvarchar(50) NOT NULL,
 gender nvarchar(50) NOT NULL,
-Age AS (datediff(year,[DOB],getdate())),
+Age AS (datediff(month,[DOB],getdate())/(12)),
 FOREIGN KEY (ownerusername) REFERENCES [User](username)
 ON UPDATE CASCADE
 ON DELETE CASCADE,

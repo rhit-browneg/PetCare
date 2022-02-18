@@ -191,7 +191,6 @@ connection.on('connect', function (err) {
     let breed = req.body.breed;
     let dob = req.body.dob;
     let ownerusername = req.body.ownerusername;
-    console.log(name + " " + ownerusername);
     request = new Request('edit_pet', function (err) {
       if (err) {
         console.log(err);
@@ -204,6 +203,14 @@ connection.on('connect', function (err) {
   request.addParameter('breed', TYPES.NVarChar, breed);
   request.addParameter('dob', TYPES.Date, dob);
   request.addParameter('ownerusernme', TYPES.NVarChar, ownerusername);
+  request.on('doneProc', function (rowCount, more, returnStatus, rows) {
+    console.log("done");
+    let setData = {
+      "pet": name
+    }
+    res.send(setData);
+    res.end();
+  });
 connection.callProcedure(request);
 });
 app.put("/api/editUser/:id", function (req, res) {

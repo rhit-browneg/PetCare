@@ -417,7 +417,7 @@ rhit.PetDetailsController = class {
 				const InputSpecies = document.querySelector("#species");
 				console.log(InputName.value);
 				this.updatePet(InputName.value, InputSpecies.value, InputGender.value, InputBreed.value, InputDOB.value, user);
-				window.location.href = `/petinfo.html?user=${user}`;
+				// window.location.href = `/petinfo.html?user=${user}`;
 	
 			};
 			document.querySelector("#delete").onclick = (event) => {
@@ -460,12 +460,12 @@ rhit.PetDetailsController = class {
 				body: JSON.stringify(data)
 			})
 			.then(Response => Response.json())
-			.then(Response => {
-				console.log(Response);
+			.then(Response =>{
+			   console.log(Response.pet);
+			   window.location.href = `/petinfo.html?user=${ownerusername}`;
 			})
-			.catch((err) => {
+			.catch(err => {
 				console.log(err);
-
 			});
 
 
